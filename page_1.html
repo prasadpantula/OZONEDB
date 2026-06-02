@@ -1,0 +1,2063 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OZ ONE — Technical Documentation</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:       #0a0e1a;
+    --navy2:      #0f1628;
+    --navy3:      #111827;
+    --accent:     #6082ff;
+    --teal:       #3af0b5;
+    --amber:      #f5a623;
+    --danger:     #ff4f4f;
+    --text:       #1a2033;
+    --text2:      #4a5580;
+    --text3:      #8892b0;
+    --border:     #dde1f0;
+    --bg:         #f7f8fc;
+    --bg2:        #ffffff;
+    --code-bg:    #f0f2fa;
+    --radius:     8px;
+    --mono:       'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  /* ── Google Fonts ── */
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+  /* ── Cover ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    background: #06091a;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* Blueprint grid overlay */
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(96,130,255,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(96,130,255,0.07) 1px, transparent 1px);
+    background-size: 52px 52px;
+    z-index: 0;
+  }
+
+  /* Radial glow — top-right */
+  .cover::after {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 560px; height: 560px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(96,130,255,0.18) 0%, transparent 70%);
+    z-index: 0;
+  }
+
+  /* Teal glow — bottom-left */
+  .cover-glow-bl {
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 380px; height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(58,240,181,0.10) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Top bar */
+  .cover-topbar {
+    position: relative; z-index: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 56px;
+    border-bottom: 1px solid rgba(96,130,255,0.15);
+  }
+
+  .cover-topbar-logo {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+  .cover-topbar-logo span { color: #6082ff; }
+
+  .cover-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.08em;
+  }
+
+  .cover-topbar-right .sep { color: rgba(255,255,255,0.15); }
+
+  /* Main body of cover */
+  .cover-body {
+    position: relative; z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 56px;
+    max-width: 780px;
+  }
+
+  .cover-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #3af0b5;
+    margin-bottom: 24px;
+  }
+  .cover-eyebrow-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #3af0b5;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  .cover h1 {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+  .cover h1 .h1-accent { color: #6082ff; }
+  .cover h1 .h1-dim    { color: rgba(255,255,255,0.25); }
+
+  .cover-tagline {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    margin: 22px 0 40px;
+    line-height: 1.4;
+    max-width: 560px;
+  }
+
+  /* Info row */
+  .cover-info-row {
+    display: flex;
+    gap: 0;
+    border: 1px solid rgba(96,130,255,0.20);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 44px;
+  }
+  .cover-info-cell {
+    padding: 14px 24px;
+    border-right: 1px solid rgba(96,130,255,0.15);
+  }
+  .cover-info-cell:last-child { border-right: none; }
+  .cover-info-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.30);
+    margin-bottom: 4px;
+  }
+  .cover-info-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.82);
+  }
+  .cover-info-value.accent { color: #6082ff; }
+  .cover-info-value.teal   { color: #3af0b5; }
+
+  /* CTA */
+  .live-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 36px;
+    background: #6082ff;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 28px rgba(96,130,255,0.35);
+  }
+  .live-link:hover { background: #7a99ff; box-shadow: 0 0 40px rgba(96,130,255,0.50); }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #3af0b5; flex-shrink: 0; animation: pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* Cover bottom strip */
+  .cover-footer-strip {
+    position: relative; z-index: 1;
+    width: 100%;
+    padding: 0 56px;
+    margin-bottom: 0;
+  }
+  /* Horizontal accent line with tick marks */
+  .cover-ruler {
+    width: 100%;
+    height: 32px;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    border-top: 1px solid rgba(96,130,255,0.25);
+    margin-bottom: 0;
+  }
+  .cover-ruler-tick {
+    position: absolute;
+    top: 0; width: 1px; height: 8px;
+    background: rgba(96,130,255,0.40);
+  }
+  .cover-ruler-tick.major { height: 14px; background: #6082ff; }
+
+  /* Status bar at very bottom of cover */
+  .cover-statusbar {
+    position: relative; z-index: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 56px;
+    border-top: 1px solid rgba(96,130,255,0.12);
+    background: rgba(10,14,26,0.70);
+  }
+  .cover-statusbar-left, .cover-statusbar-right {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 0.08em;
+  }
+  .cover-statusbar span.hi { color: rgba(255,255,255,0.55); }
+
+  /* ── TOC page ── */
+  .toc-page {
+    background: #ffffff;
+    padding: 72px 0 0;
+  }
+  .toc-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 40px 72px;
+  }
+
+  .toc-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 48px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #0a0e1a;
+  }
+  .toc-heading-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6082ff;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    line-height: 1;
+  }
+  .toc-heading h2 {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0a0e1a;
+    margin: 0; padding: 0;
+    border: none;
+  }
+  .toc-heading-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #8892b0;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+
+  /* Two-column TOC entries */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 32px;
+  }
+
+  .toc-entry {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    padding: 13px 0;
+    border-bottom: 1px solid #eef0f6;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .toc-entry:hover .toc-entry-title { color: #6082ff; }
+  .toc-entry:hover .toc-entry-num   { color: #6082ff; }
+
+  .toc-entry-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #b0b8d8;
+    min-width: 36px;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+
+  .toc-entry-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toc-entry-title {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0a0e1a;
+    display: block;
+    transition: color 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toc-entry-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #8892b0;
+    display: block;
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toc-dots {
+    flex: 1;
+    border-bottom: 1px dotted #c8cedf;
+    margin: 0 10px 3px;
+    min-width: 10px;
+  }
+
+  .toc-page-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4a5580;
+    flex-shrink: 0;
+  }
+
+  /* TOC section labels */
+  .toc-section-label {
+    grid-column: 1 / -1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #6082ff;
+    padding: 24px 0 8px;
+    border-bottom: 1px solid rgba(96,130,255,0.20);
+    margin-bottom: 2px;
+  }
+
+  /* TOC sub-entries */
+  .toc-sub {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    padding: 7px 0 7px 36px;
+    border-bottom: 1px solid #f3f4f9;
+    text-decoration: none;
+    color: inherit;
+  }
+  .toc-sub:hover .toc-entry-title { color: #6082ff; }
+  .toc-sub .toc-entry-num { font-size: 10px; color: #c8cedf; min-width: 28px; }
+  .toc-sub .toc-entry-title { font-size: 13px; font-weight: 600; color: #4a5580; }
+  .toc-sub .toc-page-num { font-size: 10px; color: #b0b8d8; }
+
+  /* Divider between cover and article */
+  .toc-page + article { border-top: 3px solid #6082ff; }
+
+  /* ── Article ── */
+  article {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+    background: var(--bg2);
+  }
+
+  /* (TOC styles moved to Cover block above) */
+
+  /* ── Headings ── */
+  h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; color: var(--navy); }
+
+  section { margin-bottom: 60px; }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 800;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2 .sec-num {
+    display: inline-block;
+    width: 32px; height: 32px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+    line-height: 32px;
+    font-size: 14px;
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+    color: var(--navy);
+  }
+
+  h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 20px 0 6px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--mono);
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* ── URL Box ── */
+  .url-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--navy);
+    color: var(--teal);
+    font-family: var(--mono);
+    font-size: 14px;
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    margin: 20px 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .url-box .label { color: var(--text3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+  .url-box a { color: var(--teal); text-decoration: none; font-weight: 700; }
+  .url-box a:hover { text-decoration: underline; }
+
+  /* ── Callout ── */
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: rgba(96,130,255,0.06);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 14px 20px;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .callout.warn { border-color: var(--amber); background: rgba(245,166,35,0.06); }
+  .callout.danger { border-color: var(--danger); background: rgba(255,79,79,0.06); }
+  .callout.teal { border-color: var(--teal); background: rgba(58,240,181,0.06); }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+  .callout.warn strong { color: var(--amber); }
+  .callout.teal strong { color: #1abc9c; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 20px 0 28px;
+  }
+  thead tr { background: var(--navy); color: #fff; }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:nth-child(even) { background: #f7f8fc; }
+  tbody td { padding: 9px 14px; vertical-align: top; }
+  tbody tr:hover { background: rgba(96,130,255,0.04); }
+
+  /* ── Code ── */
+  code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--navy);
+    color: #c9d1d9;
+    border-radius: var(--radius);
+    padding: 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    font-family: var(--mono);
+    margin: 16px 0 24px;
+    line-height: 1.6;
+  }
+  pre .kw  { color: #ff79c6; }
+  pre .str { color: #f1fa8c; }
+  pre .cmt { color: #6272a4; }
+  pre .fn  { color: var(--teal); }
+
+  /* ── Feature grid ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .feature-card {
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    background: var(--bg2);
+  }
+  .feature-card.teal  { border-top-color: var(--teal); }
+  .feature-card.amber { border-top-color: var(--amber); }
+  .feature-card.red   { border-top-color: var(--danger); }
+  .feature-card h4 { margin: 0 0 6px; font-size: 13px; color: var(--navy); text-transform: none; letter-spacing: 0; }
+  .feature-card p  { margin: 0; font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* ── Pill ── */
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+  .pill-blue   { background: rgba(96,130,255,0.12); color: var(--accent); }
+  .pill-teal   { background: rgba(58,240,181,0.12); color: #1abc9c; }
+  .pill-amber  { background: rgba(245,166,35,0.12);  color: #c87800; }
+  .pill-red    { background: rgba(255,79,79,0.12);   color: #c0392b; }
+  .pill-navy   { background: rgba(10,14,26,0.08);    color: var(--navy); }
+
+  /* ── List ── */
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin-bottom: 5px; }
+
+  /* ── Divider ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+  /* ── Status row ── */
+  .status-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+
+  /* ── Build Log section ── */
+  .buildlog-page {
+    background: #f7f8fc;
+    padding: 72px 0;
+    border-top: 2px solid var(--border);
+  }
+  .buildlog-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .buildlog-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--navy);
+  }
+  .buildlog-header h2 {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--navy);
+    border: none;
+    margin: 0; padding: 0;
+  }
+  .buildlog-header-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* Phase cards */
+  .phase-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .phase-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+  }
+  .phase-left {
+    background: var(--navy);
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .phase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.30);
+    margin-bottom: 6px;
+  }
+  .phase-name {
+    font-family: 'Syne', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .phase-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    width: fit-content;
+  }
+  .phase-tag.blue   { background: rgba(96,130,255,0.25); color: #9ab0ff; }
+  .phase-tag.teal   { background: rgba(58,240,181,0.20); color: #3af0b5; }
+  .phase-tag.amber  { background: rgba(245,166,35,0.20); color: #f5a623; }
+  .phase-tag.green  { background: rgba(39,174,96,0.20);  color: #6fcf97; }
+
+  .phase-right {
+    padding: 18px 22px;
+  }
+  .phase-ops {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .phase-op {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .phase-op-bullet {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .phase-op-bullet.teal  { background: var(--teal); }
+  .phase-op-bullet.amber { background: var(--amber); }
+  .phase-op-bullet.green { background: #6fcf97; }
+  .phase-op-text { color: var(--text); }
+  .phase-op-detail { color: var(--text3); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+  /* Credit summary table */
+  .credit-summary {
+    background: var(--navy);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .credit-summary-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  .credit-summary table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+  }
+  .credit-summary thead tr { background: rgba(255,255,255,0.04); }
+  .credit-summary thead th {
+    padding: 10px 20px;
+    text-align: left;
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .credit-summary tbody tr { border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .credit-summary tbody tr:last-child { border-bottom: none; }
+  .credit-summary tbody td {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.70);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .credit-summary tbody td:first-child { color: rgba(255,255,255,0.90); }
+  .credit-summary .credit-hi { color: #3af0b5; font-weight: 700; }
+  .credit-summary .credit-total-row td {
+    background: rgba(96,130,255,0.12);
+    color: #9ab0ff;
+    font-weight: 700;
+    border-top: 1px solid rgba(96,130,255,0.25);
+  }
+  .credit-summary .credit-total-row td:last-child { color: #3af0b5; font-size: 15px; }
+
+  .credit-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.7;
+    padding: 14px 18px;
+    background: rgba(96,130,255,0.05);
+    border: 1px solid rgba(96,130,255,0.15);
+    border-radius: 8px;
+  }
+  .credit-note a { color: var(--accent); text-decoration: none; }
+  .credit-note a:hover { text-decoration: underline; }
+
+  /* ── Page footer ── */
+  .doc-footer {
+    text-align: center;
+    padding: 40px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+    font-family: var(--mono);
+    background: var(--bg);
+  }
+</style>
+
+
+
+
+
+
+</head><body>
+
+<!-- ══════════════ COVER ══════════════ -->
+<div class="cover" data-cid="Yqx640">
+  <div class="cover-glow-bl editor-empty-block" data-cid="h-Zgby"></div>
+
+  <!-- Top bar -->
+  <div class="cover-topbar" data-cid="qU41K2">
+    <div class="cover-topbar-logo" data-cid="FHajXm">OZ <span data-cid="KjOZxO">ONE</span></div>
+    <div class="cover-topbar-right" data-cid="I8fCka">
+      <span data-cid="WbLf9u">KINGDOM OF SAUDI ARABIA</span>
+      <span class="sep" data-cid="OpH_ed">/</span>
+      <span data-cid="11CVnp">JUBAIL &amp; DAMMAM</span>
+      <span class="sep" data-cid="YbJYyT">/</span>
+      <span data-cid="Oz-j9T">ENV. MONITORING</span>
+    </div>
+  </div>
+
+  <!-- Main body -->
+  <div class="cover-body" data-cid="ql-cXK">
+    <div class="cover-eyebrow" data-cid="FFKlq_">
+      <span class="cover-eyebrow-dot" data-cid="OEmmqr"></span>
+      TECHNICAL DOCUMENTATION &nbsp;·&nbsp; v1.0.0
+    </div>
+
+    <h1 data-cid="3a8Loz">
+      <span class="h1-dim" data-cid="VZlzvd">OZ&nbsp;</span><span class="h1-accent" data-cid="wbzLcR">ONE</span><br data-cid="E6-Nkq">
+      UNIFIED<br data-cid="SpHn5t">
+      SYSTEM
+    </h1>
+
+    <p class="cover-tagline" data-cid="-uZSfU">
+      Power BI-Style Ozone Air Quality Monitoring Dashboard —
+      Jubail &amp; Dammam Industrial Regions
+    </p>
+
+    <!-- Info tiles -->
+    <div class="cover-info-row" data-cid="hM3OOx">
+      <div class="cover-info-cell" data-cid="qgghMO">
+        <div class="cover-info-label" data-cid="vT9tYj">Release Date</div>
+        <div class="cover-info-value" data-cid="rO2mMu">02 May 2026</div>
+      </div>
+      <div class="cover-info-cell" data-cid="k4LJRi">
+        <div class="cover-info-label" data-cid="-0Drzz">Version</div>
+        <div class="cover-info-value accent" data-cid="Qa139x">1.0.0</div>
+      </div>
+      <div class="cover-info-cell" data-cid="40_jGa">
+        <div class="cover-info-label" data-cid="60JeFL">Stations</div>
+        <div class="cover-info-value" data-cid="HSrLdm">9 / 9 Online</div>
+      </div>
+      <div class="cover-info-cell" data-cid="xjT6K8">
+        <div class="cover-info-label" data-cid="YUTfhM">WHO Standard</div>
+        <div class="cover-info-value" data-cid="G3uUww">120 µg/m³</div>
+      </div>
+      <div class="cover-info-cell" data-cid="l1Oc9Y">
+        <div class="cover-info-label" data-cid="UAX8M9">Current O₃ (Jubail)</div>
+        <div class="cover-info-value teal" data-cid="xlWSNW">183 µg/m³</div>
+      </div>
+      <div class="cover-info-cell" data-cid="bShcZN">
+        <div class="cover-info-label" data-cid="4WtgQ_">Stack</div>
+        <div class="cover-info-value" data-cid="FMS72x">React 18 + Recharts</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <a class="live-link" href="https://b5kssqqhxq.skywork.website" target="_blank" rel="noopener" data-cid="i2wjTq">
+      <span class="live-dot" data-cid="HvdPaF"></span>
+      OPEN LIVE DASHBOARD IN CHROME
+    </a>
+  </div>
+
+  <!-- Ruler -->
+  <div class="cover-footer-strip" data-cid="PU33ff">
+    <div class="cover-ruler" id="coverRuler" data-cid="e0kUgk"><div class="cover-ruler-tick major editor-empty-block" style="left: 0px;" data-cid="jhaznN"></div><div class="cover-ruler-tick editor-empty-block" style="left: 26px;" data-cid="2Z6lzd"></div><div class="cover-ruler-tick editor-empty-block" style="left: 52px;" data-cid="_AmPW6"></div><div class="cover-ruler-tick editor-empty-block" style="left: 78px;" data-cid="gsTdWM"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 104px;" data-cid="Syb0Uf"></div><div class="cover-ruler-tick editor-empty-block" style="left: 130px;" data-cid="kdurka"></div><div class="cover-ruler-tick editor-empty-block" style="left: 156px;" data-cid="wk5p_k"></div><div class="cover-ruler-tick editor-empty-block" style="left: 182px;" data-cid="hNT4IA"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 208px;" data-cid="B4hcOF"></div><div class="cover-ruler-tick editor-empty-block" style="left: 234px;" data-cid="XyNpYG"></div><div class="cover-ruler-tick editor-empty-block" style="left: 260px;" data-cid="JpQo_8"></div><div class="cover-ruler-tick editor-empty-block" style="left: 286px;" data-cid="4A9vFM"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 312px;" data-cid="3LsuqH"></div><div class="cover-ruler-tick editor-empty-block" style="left: 338px;" data-cid="HWfOkG"></div><div class="cover-ruler-tick editor-empty-block" style="left: 364px;" data-cid="huAv5C"></div><div class="cover-ruler-tick editor-empty-block" style="left: 390px;" data-cid="XO2lIx"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 416px;" data-cid="25oAY_"></div><div class="cover-ruler-tick editor-empty-block" style="left: 442px;" data-cid="OmtpMv"></div><div class="cover-ruler-tick editor-empty-block" style="left: 468px;" data-cid="kqL-QP"></div><div class="cover-ruler-tick editor-empty-block" style="left: 494px;" data-cid="HFLDpS"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 520px;" data-cid="BmX373"></div><div class="cover-ruler-tick editor-empty-block" style="left: 546px;" data-cid="ljtuzt"></div><div class="cover-ruler-tick editor-empty-block" style="left: 572px;" data-cid="uQ0pMV"></div><div class="cover-ruler-tick editor-empty-block" style="left: 598px;" data-cid="OQm8gV"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 624px;" data-cid="7YC0V1"></div><div class="cover-ruler-tick editor-empty-block" style="left: 650px;" data-cid="paSaed"></div><div class="cover-ruler-tick editor-empty-block" style="left: 676px;" data-cid="QYDIqQ"></div><div class="cover-ruler-tick editor-empty-block" style="left: 702px;" data-cid="vDZRjL"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 728px;" data-cid="g2nQNn"></div><div class="cover-ruler-tick editor-empty-block" style="left: 754px;" data-cid="-Q6Kyn"></div><div class="cover-ruler-tick editor-empty-block" style="left: 780px;" data-cid="COUgXX"></div><div class="cover-ruler-tick editor-empty-block" style="left: 806px;" data-cid="C1NWUS"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 832px;" data-cid="9WBkOa"></div><div class="cover-ruler-tick editor-empty-block" style="left: 858px;" data-cid="C3POMN"></div><div class="cover-ruler-tick editor-empty-block" style="left: 884px;" data-cid="089w1k"></div><div class="cover-ruler-tick editor-empty-block" style="left: 910px;" data-cid="5SYVYu"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 936px;" data-cid="t0iSv6"></div><div class="cover-ruler-tick editor-empty-block" style="left: 962px;" data-cid="ziF2YS"></div><div class="cover-ruler-tick editor-empty-block" style="left: 988px;" data-cid="AT7-ve"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1014px;" data-cid="eAXJQm"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 1040px;" data-cid="A3p8Lx"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1066px;" data-cid="mTMfzE"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1092px;" data-cid="J_SM7-"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1118px;" data-cid="3NzAOn"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 0px;" data-cid="OdQwSD"></div><div class="cover-ruler-tick editor-empty-block" style="left: 26px;" data-cid="702SHR"></div><div class="cover-ruler-tick editor-empty-block" style="left: 52px;" data-cid="z_jEB2"></div><div class="cover-ruler-tick editor-empty-block" style="left: 78px;" data-cid="bFGK8z"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 104px;" data-cid="LDxCNx"></div><div class="cover-ruler-tick editor-empty-block" style="left: 130px;" data-cid="Z1yfwh"></div><div class="cover-ruler-tick editor-empty-block" style="left: 156px;" data-cid="YgiuFK"></div><div class="cover-ruler-tick editor-empty-block" style="left: 182px;" data-cid="wU-IMr"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 208px;" data-cid="YJ5QoH"></div><div class="cover-ruler-tick editor-empty-block" style="left: 234px;" data-cid="-UCD99"></div><div class="cover-ruler-tick editor-empty-block" style="left: 260px;" data-cid="bmp3Zn"></div><div class="cover-ruler-tick editor-empty-block" style="left: 286px;" data-cid="NzMEFD"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 312px;" data-cid="gGZHQu"></div><div class="cover-ruler-tick editor-empty-block" style="left: 338px;" data-cid="xXgpkv"></div><div class="cover-ruler-tick editor-empty-block" style="left: 364px;" data-cid="_LVmX1"></div><div class="cover-ruler-tick editor-empty-block" style="left: 390px;" data-cid="5d4Bel"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 416px;" data-cid="SlVfb3"></div><div class="cover-ruler-tick editor-empty-block" style="left: 442px;" data-cid="rGhBSZ"></div><div class="cover-ruler-tick editor-empty-block" style="left: 468px;" data-cid="SYfG0s"></div><div class="cover-ruler-tick editor-empty-block" style="left: 494px;" data-cid="jpsbX9"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 520px;" data-cid="5a07VT"></div><div class="cover-ruler-tick editor-empty-block" style="left: 546px;" data-cid="FtX3g4"></div><div class="cover-ruler-tick editor-empty-block" style="left: 572px;" data-cid="reLKB4"></div><div class="cover-ruler-tick editor-empty-block" style="left: 598px;" data-cid="cHxWEQ"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 624px;" data-cid="VM-rZt"></div><div class="cover-ruler-tick editor-empty-block" style="left: 650px;" data-cid="EM4Rmc"></div><div class="cover-ruler-tick editor-empty-block" style="left: 676px;" data-cid="WRrGff"></div><div class="cover-ruler-tick editor-empty-block" style="left: 702px;" data-cid="i13lSW"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 728px;" data-cid="itNeC5"></div><div class="cover-ruler-tick editor-empty-block" style="left: 754px;" data-cid="Atfh1s"></div><div class="cover-ruler-tick editor-empty-block" style="left: 780px;" data-cid="VLcVa3"></div><div class="cover-ruler-tick editor-empty-block" style="left: 806px;" data-cid="QQsVj1"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 832px;" data-cid="wnlWjO"></div><div class="cover-ruler-tick editor-empty-block" style="left: 858px;" data-cid="fOYrvK"></div><div class="cover-ruler-tick editor-empty-block" style="left: 884px;" data-cid="Lqdcks"></div><div class="cover-ruler-tick editor-empty-block" style="left: 910px;" data-cid="omwh0h"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 936px;" data-cid="UlbD2Q"></div><div class="cover-ruler-tick editor-empty-block" style="left: 962px;" data-cid="PcyT6q"></div><div class="cover-ruler-tick editor-empty-block" style="left: 988px;" data-cid="L1q8VP"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1014px;" data-cid="WnZIgg"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 1040px;" data-cid="Xip-g5"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1066px;" data-cid="uAkbIR"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1092px;" data-cid="50MlIP"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1118px;" data-cid="7kRebP"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 0px;" data-cid="iTf05S"></div><div class="cover-ruler-tick editor-empty-block" style="left: 26px;" data-cid="7K_Mbu"></div><div class="cover-ruler-tick editor-empty-block" style="left: 52px;" data-cid="JpV753"></div><div class="cover-ruler-tick editor-empty-block" style="left: 78px;" data-cid="vuCzXb"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 104px;" data-cid="zcLway"></div><div class="cover-ruler-tick editor-empty-block" style="left: 130px;" data-cid="iChM-N"></div><div class="cover-ruler-tick editor-empty-block" style="left: 156px;" data-cid="wUY7vJ"></div><div class="cover-ruler-tick editor-empty-block" style="left: 182px;" data-cid="mTdE02"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 208px;" data-cid="0x13uP"></div><div class="cover-ruler-tick editor-empty-block" style="left: 234px;" data-cid="XnIdrF"></div><div class="cover-ruler-tick editor-empty-block" style="left: 260px;" data-cid="7IaOFO"></div><div class="cover-ruler-tick editor-empty-block" style="left: 286px;" data-cid="EbB_II"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 312px;" data-cid="fdOXcZ"></div><div class="cover-ruler-tick editor-empty-block" style="left: 338px;" data-cid="ivvrxm"></div><div class="cover-ruler-tick editor-empty-block" style="left: 364px;" data-cid="_SHwJY"></div><div class="cover-ruler-tick editor-empty-block" style="left: 390px;" data-cid="qgbgRK"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 416px;" data-cid="nIBMHG"></div><div class="cover-ruler-tick editor-empty-block" style="left: 442px;" data-cid="SuN83A"></div><div class="cover-ruler-tick editor-empty-block" style="left: 468px;" data-cid="WfPMv8"></div><div class="cover-ruler-tick editor-empty-block" style="left: 494px;" data-cid="hiKFXJ"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 520px;" data-cid="SY8-8C"></div><div class="cover-ruler-tick editor-empty-block" style="left: 546px;" data-cid="y3qlBa"></div><div class="cover-ruler-tick editor-empty-block" style="left: 572px;" data-cid="yby0tB"></div><div class="cover-ruler-tick editor-empty-block" style="left: 598px;" data-cid="85OzXQ"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 624px;" data-cid="1V97ZW"></div><div class="cover-ruler-tick editor-empty-block" style="left: 650px;" data-cid="WRa41j"></div><div class="cover-ruler-tick editor-empty-block" style="left: 676px;" data-cid="O-W2bo"></div><div class="cover-ruler-tick editor-empty-block" style="left: 702px;" data-cid="n4JV1X"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 728px;" data-cid="_Fdc8D"></div><div class="cover-ruler-tick editor-empty-block" style="left: 754px;" data-cid="jltALa"></div><div class="cover-ruler-tick editor-empty-block" style="left: 780px;" data-cid="yRdUCS"></div><div class="cover-ruler-tick editor-empty-block" style="left: 806px;" data-cid="1SYDAU"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 832px;" data-cid="NxaR-7"></div><div class="cover-ruler-tick editor-empty-block" style="left: 858px;" data-cid="WLXehv"></div><div class="cover-ruler-tick editor-empty-block" style="left: 884px;" data-cid="S_tegk"></div><div class="cover-ruler-tick editor-empty-block" style="left: 910px;" data-cid="GZVmt0"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 936px;" data-cid="FmPBVG"></div><div class="cover-ruler-tick editor-empty-block" style="left: 962px;" data-cid="E5AzV7"></div><div class="cover-ruler-tick editor-empty-block" style="left: 988px;" data-cid="WNt7ia"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1014px;" data-cid="Mpwrcd"></div><div class="cover-ruler-tick major editor-empty-block" style="left: 1040px;" data-cid="8qMn62"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1066px;" data-cid="-MG_A7"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1092px;" data-cid="FmKzKq"></div><div class="cover-ruler-tick editor-empty-block" style="left: 1118px;" data-cid="2MydG5"></div></div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="cover-statusbar" data-cid="WkJV0O">
+    <div class="cover-statusbar-left" data-cid="FM5aMh">
+      <span data-cid="vbfmNT">DATA SOURCE: <span class="hi" data-cid="3T4Fkv">RCEC / PME</span></span>
+      <span data-cid="qh3GqA">REF PERIOD: <span class="hi" data-cid="CQE6DX">8-HOUR ROLLING AVG</span></span>
+      <span data-cid="CrCmP3">COORDINATE SYSTEM: <span class="hi" data-cid="ku4XK6">WGS 84</span></span>
+    </div>
+    <div class="cover-statusbar-right" data-cid="9C-Bfa">
+      <span data-cid="aSpyNq">CLASSIFICATION: <span class="hi" data-cid="jImnyK">UNCLASSIFIED</span></span>
+      <span data-cid="VyImxr">DOC ID: <span class="hi" data-cid="3RPVnP">OZ1-DOC-2026-001</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TABLE OF CONTENTS ══════════════ -->
+<div class="toc-page" data-cid="JjPcby">
+  <div class="toc-inner" data-cid="Cmfd3G">
+
+    <div class="toc-heading" data-cid="TzTDuk">
+      <div class="toc-heading-num" data-cid="YgEmQl">CONTENTS</div>
+      <div data-cid="-IkDnB">
+        <h2 data-cid="8JQTaU">Table of Contents</h2>
+        <div class="toc-heading-sub" data-cid="K6OuxZ">OZ ONE UNIFIED SYSTEM &nbsp;·&nbsp; TECHNICAL DOCUMENTATION v1.0</div>
+      </div>
+    </div>
+
+    <div class="toc-grid" data-cid="1fegIl">
+
+      <div class="toc-section-label" data-cid="MNGagC">Overview &amp; Access</div>
+
+      <a class="toc-entry" href="#s1" data-cid="Nm_bqX">
+        <span class="toc-entry-num" data-cid="v7lw5s">01</span>
+        <span class="toc-entry-body" data-cid="eYMdoV">
+          <span class="toc-entry-title" data-cid="Fcv1fs">Project Overview</span>
+          <span class="toc-entry-desc" data-cid="9FlFzL">Scope, purpose, capability cards</span>
+        </span>
+        <span class="toc-dots" data-cid="A65kdG"></span>
+        <span class="toc-page-num" data-cid="pD_lFv">01</span>
+      </a>
+
+      <a class="toc-entry" href="#s2" data-cid="ojP6fZ">
+        <span class="toc-entry-num" data-cid="-Y0gVV">02</span>
+        <span class="toc-entry-body" data-cid="G6TRsy">
+          <span class="toc-entry-title" data-cid="NEymVj">Live Dashboard URL</span>
+          <span class="toc-entry-desc" data-cid="elcqWz">Chrome link, browser settings</span>
+        </span>
+        <span class="toc-dots" data-cid="5cEBlB"></span>
+        <span class="toc-page-num" data-cid="Q9hbju">02</span>
+      </a>
+
+      <div class="toc-section-label" data-cid="Ulyxu-">Architecture</div>
+
+      <a class="toc-entry" href="#s3" data-cid="ePoT-b">
+        <span class="toc-entry-num" data-cid="IxcZF_">03</span>
+        <span class="toc-entry-body" data-cid="QrbDd5">
+          <span class="toc-entry-title" data-cid="rAQUDg">Architecture &amp; Tech Stack</span>
+          <span class="toc-entry-desc" data-cid="9KOTq2">Framework, file structure, data layer</span>
+        </span>
+        <span class="toc-dots" data-cid="IueJNR"></span>
+        <span class="toc-page-num" data-cid="SKhl6u">03</span>
+      </a>
+
+      <a class="toc-sub" href="#s3a" data-cid="cDiQ8N">
+        <span class="toc-entry-num" data-cid="YVFpJt">3.1</span>
+        <span class="toc-entry-body" data-cid="7iJVil"><span class="toc-entry-title" data-cid="-mDv1c">Frontend Framework</span></span>
+        <span class="toc-dots" data-cid="c0lPZx"></span>
+        <span class="toc-page-num" data-cid="tqyB4l">03</span>
+      </a>
+
+      <a class="toc-sub" href="#s3b" data-cid="DGnpi8">
+        <span class="toc-entry-num" data-cid="XFcZTe">3.2</span>
+        <span class="toc-entry-body" data-cid="XyEchm"><span class="toc-entry-title" data-cid="mLgE0s">File Structure</span></span>
+        <span class="toc-dots" data-cid="5k4r5t"></span>
+        <span class="toc-page-num" data-cid="ML3MMZ">03</span>
+      </a>
+
+      <a class="toc-sub" href="#s3c" data-cid="5_4oCa">
+        <span class="toc-entry-num" data-cid="SLy7Oc">3.3</span>
+        <span class="toc-entry-body" data-cid="wol5Rq"><span class="toc-entry-title" data-cid="H5zbI5">Data Layer</span></span>
+        <span class="toc-dots" data-cid="_xdt-s"></span>
+        <span class="toc-page-num" data-cid="_1vFSY">04</span>
+      </a>
+
+      <div class="toc-section-label" data-cid="m4TT6X">Dashboard Pages &amp; Features</div>
+
+      <a class="toc-entry" href="#s4" data-cid="O8y_4t">
+        <span class="toc-entry-num" data-cid="kQ_zWG">04</span>
+        <span class="toc-entry-body" data-cid="wwybA5">
+          <span class="toc-entry-title" data-cid="tBFnMp">Dashboard Pages</span>
+          <span class="toc-entry-desc" data-cid="xh-m9O">All 5 pages, interactions, drill-downs</span>
+        </span>
+        <span class="toc-dots" data-cid="uEXaIN"></span>
+        <span class="toc-page-num" data-cid="QbW3oo">05</span>
+      </a>
+
+      <a class="toc-sub" href="#s4a" data-cid="Z7qoNq">
+        <span class="toc-entry-num" data-cid="JjftxL">4.1</span>
+        <span class="toc-entry-body" data-cid="qvoN0w"><span class="toc-entry-title" data-cid="hjeKbK">Main Dashboard</span></span>
+        <span class="toc-dots" data-cid="_6I9mG"></span>
+        <span class="toc-page-num" data-cid="Qmt-ec">05</span>
+      </a>
+
+      <a class="toc-sub" href="#s4b" data-cid="PJorw9">
+        <span class="toc-entry-num" data-cid="WfwSgP">4.2</span>
+        <span class="toc-entry-body" data-cid="lyY2zn"><span class="toc-entry-title" data-cid="IaDzdw">Precursor Sources</span></span>
+        <span class="toc-dots" data-cid="jEc-fW"></span>
+        <span class="toc-page-num" data-cid="gpEGhl">06</span>
+      </a>
+
+      <a class="toc-sub" href="#s4c" data-cid="aW_ncG">
+        <span class="toc-entry-num" data-cid="RK073u">4.3</span>
+        <span class="toc-entry-body" data-cid="z7mFta"><span class="toc-entry-title" data-cid="Ze9QF0">Ozone Chemistry</span></span>
+        <span class="toc-dots" data-cid="Gnzp13"></span>
+        <span class="toc-page-num" data-cid="UE7IgG">07</span>
+      </a>
+
+      <a class="toc-sub" href="#s4d" data-cid="7JXzIP">
+        <span class="toc-entry-num" data-cid="lR_nCt">4.4</span>
+        <span class="toc-entry-body" data-cid="8baLSK"><span class="toc-entry-title" data-cid="eLxLeK">Analytics</span></span>
+        <span class="toc-dots" data-cid="49C3ZT"></span>
+        <span class="toc-page-num" data-cid="DiJ68j">08</span>
+      </a>
+
+      <a class="toc-sub" href="#s4e" data-cid="7PYWyQ">
+        <span class="toc-entry-num" data-cid="BsNHwZ">4.5</span>
+        <span class="toc-entry-body" data-cid="79XIpu"><span class="toc-entry-title" data-cid="xB8bTa">Alerts &amp; Health</span></span>
+        <span class="toc-dots" data-cid="wFBdWa"></span>
+        <span class="toc-page-num" data-cid="y_jFvh">09</span>
+      </a>
+
+      <div class="toc-section-label" data-cid="9mLSd2">Analysis &amp; Design</div>
+
+      <a class="toc-entry" href="#s5" data-cid="NIe1tT">
+        <span class="toc-entry-num" data-cid="xHWsl1">05</span>
+        <span class="toc-entry-body" data-cid="a2XfAl">
+          <span class="toc-entry-title" data-cid="oKPbHT">Power BI Features</span>
+          <span class="toc-entry-desc" data-cid="7JTC78">16 implemented interaction paradigms</span>
+        </span>
+        <span class="toc-dots" data-cid="ySGDLX"></span>
+        <span class="toc-page-num" data-cid="RUOlfH">10</span>
+      </a>
+
+      <a class="toc-entry" href="#s6" data-cid="p91Zqf">
+        <span class="toc-entry-num" data-cid="M6eiTV">06</span>
+        <span class="toc-entry-body" data-cid="t2Ynpu">
+          <span class="toc-entry-title" data-cid="d_VWnY">Global Slicer Controls</span>
+          <span class="toc-entry-desc" data-cid="dTWrRu">Region &amp; time range slicers</span>
+        </span>
+        <span class="toc-dots" data-cid="pEtw8I"></span>
+        <span class="toc-page-num" data-cid="TnZIeR">11</span>
+      </a>
+
+      <a class="toc-entry" href="#s7" data-cid="HKkgPv">
+        <span class="toc-entry-num" data-cid="oyV8WP">07</span>
+        <span class="toc-entry-body" data-cid="VF6h2V">
+          <span class="toc-entry-title" data-cid="U7pdmL">Design System</span>
+          <span class="toc-entry-desc" data-cid="H02nCH">AQI colors, chart palette, typography</span>
+        </span>
+        <span class="toc-dots" data-cid="1tva9i"></span>
+        <span class="toc-page-num" data-cid="s8PJR5">12</span>
+      </a>
+
+      <div class="toc-section-label" data-cid="IneOZ7">Reference &amp; Roadmap</div>
+
+      <a class="toc-entry" href="#s8" data-cid="UhEPrg">
+        <span class="toc-entry-num" data-cid="-3uKNG">08</span>
+        <span class="toc-entry-body" data-cid="3RDjAz">
+          <span class="toc-entry-title" data-cid="YKN_83">Data Reference</span>
+          <span class="toc-entry-desc" data-cid="jQmQK4">Stations, readings, scenarios</span>
+        </span>
+        <span class="toc-dots" data-cid="h7_AoB"></span>
+        <span class="toc-page-num" data-cid="93QrPS">13</span>
+      </a>
+
+      <a class="toc-entry" href="#s9" data-cid="_NEnRd">
+        <span class="toc-entry-num" data-cid="RlUyNf">09</span>
+        <span class="toc-entry-body" data-cid="To9TpW">
+          <span class="toc-entry-title" data-cid="3CGxla">Browser Usage Guide</span>
+          <span class="toc-entry-desc" data-cid="GzjQ8e">Navigation, shortcuts, notes</span>
+        </span>
+        <span class="toc-dots" data-cid="YJe6Pc"></span>
+        <span class="toc-page-num" data-cid="FKaJ6W">14</span>
+      </a>
+
+      <a class="toc-entry" href="#s10" data-cid="PdHgm5">
+        <span class="toc-entry-num" data-cid="ePJ5fb">10</span>
+        <span class="toc-entry-body" data-cid="mo92IZ">
+          <span class="toc-entry-title" data-cid="aHbBdI">Future Enhancements</span>
+          <span class="toc-entry-desc" data-cid="RuRMbt">Roadmap, 8 planned features</span>
+        </span>
+        <span class="toc-dots" data-cid="v3g7Vz"></span>
+        <span class="toc-page-num" data-cid="zOYG7B">15</span>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ARTICLE ══════════════ -->
+<article data-cid="wqW0x8">
+
+  <!-- ── Section 1 ── -->
+  <section id="s1" data-cid="YwwXo4">
+    <h2 data-cid="qiPfMl"><span class="sec-num" data-cid="Vje8ms">1</span> Project Overview</h2>
+    <p data-cid="QIDCVl">
+      The <strong data-cid="JdIZnC">OZ ONE Unified System</strong> is a full-featured, browser-native environmental monitoring
+      dashboard built to replicate and extend Power BI's interactive analytics experience without requiring
+      any Microsoft licensing or desktop software. It provides real-time-style ozone (O₃) air quality
+      monitoring across two industrial regions in the Kingdom of Saudi Arabia: <strong data-cid="zu0O2J">Jubail</strong> and
+      <strong data-cid="PzE3KD">Dammam</strong>.
+    </p>
+    <p data-cid="ceeUAT">
+      The dashboard was converted from a knowledge-base HTML file (embedded inside a DOCX OLE object)
+      into a fully structured React application with multi-page navigation, cross-filtering, drill-down
+      hierarchies, live KPI cards, and alerting — mirroring the key interaction paradigms of Microsoft
+      Power BI Desktop.
+    </p>
+
+    <div class="feature-grid" data-cid="jKls-U">
+      <div class="feature-card" data-cid="UJ5Hy6">
+        <h4 data-cid="EIcs10">Monitoring Scope</h4>
+        <p data-cid="1WOkzS">9 air quality monitoring stations across Jubail (5) and Dammam (4) regions, reporting O₃, NOₓ, VOC, temperature, wind, and humidity.</p>
+      </div>
+      <div class="feature-card teal" data-cid="kmZC_S">
+        <h4 data-cid="qZaK_a">WHO Compliance Tracking</h4>
+        <p data-cid="g452_Y">Real-time comparison against the WHO O₃ standard of 120 µg/m³ (8-hour rolling average), with visible reference lines on every chart.</p>
+      </div>
+      <div class="feature-card amber" data-cid="28Lbh4">
+        <h4 data-cid="du9Z65">Drill-Down Analytics</h4>
+        <p data-cid="J0qy_q">3-level drill-down hierarchy on the main dashboard: Region → Station → Hourly profile, mimicking Power BI's visual drill mode.</p>
+      </div>
+      <div class="feature-card red" data-cid="SnmQpf">
+        <h4 data-cid="A4la5q">Alert Management</h4>
+        <p data-cid="flUIX1">Active alert queue with severity tiers (INFO / WARNING / DANGER / CRITICAL), acknowledgment workflow, and health impact guide.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Section 2 ── -->
+  <section id="s2" data-cid="KAcJRC">
+    <h2 data-cid="HsBP96"><span class="sec-num" data-cid="oRp97U">2</span> Live Dashboard URL</h2>
+    <p data-cid="6a4hKv">
+      The dashboard is deployed on Skywork CDN and is accessible directly in any modern browser —
+      no installation, login, or plugin required. Click the link or paste it into Chrome's address bar:
+    </p>
+
+    <div class="url-box" data-cid="3sRLM8">
+      <span class="label" data-cid="7CVljX">Live URL</span>
+      <a href="https://b5kssqqhxq.skywork.website" target="_blank" rel="noopener" data-cid="4c53t1">
+        https://b5kssqqhxq.skywork.website
+      </a>
+    </div>
+
+    <div class="callout teal" data-cid="9Qf6vo">
+      <strong data-cid="CUKByE">Opening in Chrome</strong>
+      Copy the URL above, open a new Chrome tab (Ctrl+T / Cmd+T), paste it into the address bar (Ctrl+V / Cmd+V), and press Enter. The dashboard loads fully in the browser — no downloads needed.
+    </div>
+
+    <h3 data-cid="jacLcx">Recommended Browser Settings</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="poF441"><table data-cid="h_LmdD">
+      <thead data-cid="wgJZ_7">
+        <tr data-cid="3nrSjk">
+          <th data-cid="TAKU7i">Setting</th>
+          <th data-cid="F3U-ie">Recommended Value</th>
+          <th data-cid="pQpbO8">Reason</th>
+        </tr>
+      </thead>
+      <tbody data-cid="LA3jnd">
+        <tr data-cid="8BOK-k">
+          <td data-cid="W_3QC1">Browser</td>
+          <td data-cid="Izt2C3">Google Chrome 110+ (or any Chromium-based browser)</td>
+          <td data-cid="OTo9El">Full CSS and JavaScript support</td>
+        </tr>
+        <tr data-cid="YWkEXt">
+          <td data-cid="Weeh_V">Zoom level</td>
+          <td data-cid="0fA73K">100% (Ctrl+0 to reset)</td>
+          <td data-cid="5KRGMt">Optimized for 1440px viewport width</td>
+        </tr>
+        <tr data-cid="DbKXLr">
+          <td data-cid="osZ8cb">Screen resolution</td>
+          <td data-cid="gXQ5Pj">1440 × 900 or wider recommended</td>
+          <td data-cid="XBSehO">KPI grid uses 6-column layout</td>
+        </tr>
+        <tr data-cid="1IJy9K">
+          <td data-cid="26UAMH">JavaScript</td>
+          <td data-cid="bEluO6">Must be enabled</td>
+          <td data-cid="k5_r8W">All charts and interactions are JS-driven</td>
+        </tr>
+        <tr data-cid="qyWA_Y">
+          <td data-cid="bsxYP2">Google Fonts</td>
+          <td data-cid="Wwn_u-">Allow (outbound request to fonts.googleapis.com)</td>
+          <td data-cid="BZfhgG">Loads Syne and JetBrains Mono typefaces</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ── Section 3 ── -->
+  <section id="s3" data-cid="9qvjMh">
+    <h2 data-cid="VSXVL4"><span class="sec-num" data-cid="kcjswm">3</span> Architecture &amp; Technology Stack</h2>
+
+    <h3 id="s3a" data-cid="arUIK9">3.1 Frontend Framework</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="A4I5cE"><table data-cid="hmOWQu">
+      <thead data-cid="JSqY7K">
+        <tr data-cid="dsQeTo"><th data-cid="pDQ66W">Layer</th><th data-cid="uS5Cb5">Technology</th><th data-cid="A8bMTr">Version</th><th data-cid="c-wcsE">Purpose</th></tr>
+      </thead>
+      <tbody data-cid="MLa512">
+        <tr data-cid="Bw3h6k"><td data-cid="R4NSvX">UI Framework</td><td data-cid="uqi0da">React</td><td data-cid="0iikTg">18.3</td><td data-cid="IuhHKN">Component model, state management</td></tr>
+        <tr data-cid="KUFYgV"><td data-cid="PUBpDI">Build Tool</td><td data-cid="BvkpZF">Vite</td><td data-cid="I0J18o">5.4</td><td data-cid="wDihEg">Fast HMR dev server, optimized production build</td></tr>
+        <tr data-cid="1cbgf9"><td data-cid="ksED2k">Language</td><td data-cid="6Lc_yj">TypeScript</td><td data-cid="ue6rfT">5.5</td><td data-cid="r22Rik">Type safety across all components</td></tr>
+        <tr data-cid="nsNSdx"><td data-cid="6LRYrW">Styling</td><td data-cid="3RdRyD">Tailwind CSS v4</td><td data-cid="V-plub">4.0</td><td data-cid="FNp3tl">Utility-first CSS with <code data-cid="PMGHhe">@theme inline</code> design tokens</td></tr>
+        <tr data-cid="EOCgZi"><td data-cid="n-FdVW">Components</td><td data-cid="Ta8GL2">shadcn/ui + Radix UI</td><td data-cid="4QGfWf">latest</td><td data-cid="MX8ad-">Accessible headless UI primitives</td></tr>
+        <tr data-cid="JBnzuy"><td data-cid="tHOHEl">Charts</td><td data-cid="XGh-zb">Recharts</td><td data-cid="kAF0oH">2.12</td><td data-cid="g-eetd">Composable SVG chart library (LineChart, BarChart, PieChart, ScatterChart)</td></tr>
+        <tr data-cid="JkF88C"><td data-cid="pRGKJ_">Routing</td><td data-cid="hFJAdz">React Router DOM</td><td data-cid="tZ4YaI">6.26</td><td data-cid="-QYODB">HashRouter for SPA navigation (5 routes)</td></tr>
+        <tr data-cid="rTwFiW"><td data-cid="rcKf1b">Animation</td><td data-cid="KPVYoh">Framer Motion</td><td data-cid="BMib6f">11.15</td><td data-cid="bNZlnD">Spring-physics transitions (available for future use)</td></tr>
+        <tr data-cid="T3SZTQ"><td data-cid="rO5YML">Icons</td><td data-cid="BVG0Gt">Lucide React</td><td data-cid="0J6RZQ">0.462</td><td data-cid="YSUxZL">Pixel-perfect icon set</td></tr>
+        <tr data-cid="VlprsB"><td data-cid="2gpasn">Fonts</td><td data-cid="yWmH3l">Syne + JetBrains Mono</td><td data-cid="fciOIU">Google Fonts</td><td data-cid="Xk9RSt">Dashboard heading and data typography</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="s3b" data-cid="7H25Dd">3.2 File Structure</h3>
+    <pre data-cid="NxLj3d">src/
+├── <span class="fn" data-cid="3QJTi_">App.tsx</span>               <span class="cmt" data-cid="BJLLMR"># Root: HashRouter + Layout + 5 Routes</span>
+├── <span class="fn" data-cid="24CajV">main.tsx</span>             <span class="cmt" data-cid="W7EMWe"># ReactDOM entry point</span>
+├── <span class="fn" data-cid="zcxe2R">index.css</span>            <span class="cmt" data-cid="qNIHvT"># Tailwind v4 + design tokens (dark theme)</span>
+│
+├── lib/
+│   └── <span class="fn" data-cid="XOzhos">index.ts</span>         <span class="cmt" data-cid="71nJB5"># ROUTE_PATHS, Types, AQI helpers (getAqiStatus, getStatusColor…)</span>
+│
+├── data/
+│   └── <span class="fn" data-cid="kpcQH9">index.ts</span>         <span class="cmt" data-cid="BN1d7t"># All mock data: O₃ readings, stations, NOₓ, VOC, alerts…</span>
+│
+├── components/
+│   ├── <span class="fn" data-cid="MHWl99">Layout.tsx</span>       <span class="cmt" data-cid="bxq5sa"># Top header, nav tabs, breadcrumb, status bar</span>
+│   └── <span class="fn" data-cid="OnyTUV">Cards.tsx</span>        <span class="cmt" data-cid="bhOBf5"># KpiCard, ChartCard, AqiGauge, AlertBadge, SectionLabel, FilterChip</span>
+│
+└── pages/
+    ├── <span class="fn" data-cid="HDUV9i">Dashboard.tsx</span>    <span class="cmt" data-cid="vm57s3"># Page 1 — 24h trend, KPIs, AQI gauges, station table</span>
+    ├── <span class="fn" data-cid="zd_u3k">Precursors.tsx</span>   <span class="cmt" data-cid="h8rGHQ"># Page 2 — NOₓ donut, VOC bar, weekly pattern</span>
+    ├── <span class="fn" data-cid="fFqUe2">Chemistry.tsx</span>    <span class="cmt" data-cid="cnurPi"># Page 3 — Seasonal trend, temp-O₃ scatter</span>
+    ├── <span class="fn" data-cid="3Zaevm">Analytics.tsx</span>    <span class="cmt" data-cid="lYusJv"># Page 4 — Long-term dual-axis, mitigation scenarios</span>
+    └── <span class="fn" data-cid="4Hpkjf">Alerts.tsx</span>       <span class="cmt" data-cid="-Wmwa5"># Page 5 — Alert queue, health guide, acknowledge workflow</span></pre>
+
+    <h3 id="s3c" data-cid="B_qk5k">3.3 Data Layer</h3>
+    <p data-cid="03viVC">
+      All data is defined in <code data-cid="6TfKo-">src/data/index.ts</code> as typed TypeScript constants.
+      There is no backend API — the dashboard is a fully self-contained static SPA. The data
+      mirrors the original OZ ONE HTML dashboard values exactly. Replacing the constants with
+      live API calls requires only swapping the import source.
+    </p>
+
+    <div class="callout" data-cid="JfGck0">
+      <strong data-cid="yZdjcI">Data Sources in the Original System</strong>
+      The original OZ ONE dashboard (embedded in the DOCX file) references data from RCEC
+      (Regional Center for Environmental Consultancy) and PME (Presidency of Meteorology and
+      Environment, Saudi Arabia). The status bar footer displays "Data source: RCEC / PME".
+    </div>
+  </section>
+
+  <!-- ── Section 4 ── -->
+  <section id="s4" data-cid="r2r0HX">
+    <h2 data-cid="qP6DXP"><span class="sec-num" data-cid="gmWhrK">4</span> Dashboard Pages &amp; Features</h2>
+
+    <!-- Page 1 -->
+    <h3 id="s4a" data-cid="1DGx5C">4.1 Page 1 — Main Dashboard</h3>
+    <p data-cid="XiB3xS"><strong data-cid="0_Yccb">Route:</strong> <code data-cid="aOxxk4">#/</code> (default landing page)</p>
+
+    <h4 data-cid="g2gJG0">Components</h4>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="5qA5Rf"><table data-cid="WDp9EK">
+      <thead data-cid="Eqe5XK">
+        <tr data-cid="M3CwgO"><th data-cid="dXs6xB">Component</th><th data-cid="1iWpAF">Description</th></tr>
+      </thead>
+      <tbody data-cid="sPL42a">
+        <tr data-cid="BM2vZM">
+          <td data-cid="RChxPe">KPI Cards Row (6 cards)</td>
+          <td data-cid="vPiGnQ">Current O₃ Jubail, Current O₃ Dammam, Exceedances Today, Temperature, Wind Speed, Humidity — each with an inline sparkline, delta percent vs yesterday, and AQI status badge.</td>
+        </tr>
+        <tr data-cid="8KqUqU">
+          <td data-cid="eM7xMU">24-Hour O₃ Trend Chart</td>
+          <td data-cid="y2SfR8">Multi-series line chart (Jubail, Dammam, WHO Standard). Responsive to Region slicer. Transitions to station-level bar chart and hourly line chart on drill-down.</td>
+        </tr>
+        <tr data-cid="d8nKr1">
+          <td data-cid="PMo2uc">AQI Ring Gauges (×2)</td>
+          <td data-cid="ejYiNR">SVG arc gauges for Jubail (183 µg/m³) and Dammam (165 µg/m³). Color transitions from teal (good) to red (hazardous). Click to trigger drill-down.</td>
+        </tr>
+        <tr data-cid="bgad4Y">
+          <td data-cid="ZCNS0o">Station Status Table</td>
+          <td data-cid="_x0vhF">Full table of all 9 stations with Station ID, Location, Region, Current O₃, Peak O₃, Status badge, and drill action. Visible at the overview level only.</td>
+        </tr>
+        <tr data-cid="KelKDc">
+          <td data-cid="H6Gvqk">Cross-filter chips</td>
+          <td data-cid="TcKmCn">Active filter displayed as removable chips above the chart when a drill-down or filter is active.</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <h4 data-cid="2Q32AZ">Drill-Down Hierarchy</h4>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="UqmVjh"><table data-cid="ypXvFw">
+      <thead data-cid="tzPFs2">
+        <tr data-cid="lBOEPN"><th data-cid="oWugyy">Level</th><th data-cid="XvRTVE">Trigger</th><th data-cid="eloUV6">Chart shown</th><th data-cid="8kuD-f">Breadcrumb</th></tr>
+      </thead>
+      <tbody data-cid="dxZ5tm">
+        <tr data-cid="Oqcz76">
+          <td data-cid="oNydC2"><strong data-cid="5n3PIT">Level 1</strong> — Overview</td>
+          <td data-cid="1S1Bkp">Default state</td>
+          <td data-cid="3tFFmQ">24h line chart (Jubail + Dammam)</td>
+          <td data-cid="Lfj8Sq">Overview</td>
+        </tr>
+        <tr data-cid="AAJuCs">
+          <td data-cid="ueIUUb"><strong data-cid="7asnhK">Level 2</strong> — Stations</td>
+          <td data-cid="cQjAjm">Click AQI gauge (Jubail or Dammam)</td>
+          <td data-cid="xiywMo">Bar chart: each station's current O₃ value, colored by status</td>
+          <td data-cid="23pBQu">Overview / Jubail</td>
+        </tr>
+        <tr data-cid="wqF2Qj">
+          <td data-cid="28pE-N"><strong data-cid="jZ-KQ4">Level 3</strong> — Hourly</td>
+          <td data-cid="Pv68oC">Click a station bar</td>
+          <td data-cid="6xemRG">Line chart: 24h O₃ profile for that specific station</td>
+          <td data-cid="B7q8We">Overview / Jubail / Port Area</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <p data-cid="ZtL__x">Drill back up using the "← Back" button on the chart card header, or remove the cross-filter chip.</p>
+
+    <!-- Page 2 -->
+    <h3 id="s4b" data-cid="klY0hO">4.2 Page 2 — Precursor Sources</h3>
+    <p data-cid="YuQKxs"><strong data-cid="_fF4Io">Route:</strong> <code data-cid="tXAX6U">#/precursors</code></p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="8oSBEH"><table data-cid="yis6zC">
+      <thead data-cid="etZxJ4">
+        <tr data-cid="PzpOik"><th data-cid="FiDpZs">Chart</th><th data-cid="FBiF6x">Type</th><th data-cid="YWuncu">Drill-Down / Interaction</th></tr>
+      </thead>
+      <tbody data-cid="nxu-i8">
+        <tr data-cid="m46KVq">
+          <td data-cid="SPUrqY">NOₓ Emission Sources</td>
+          <td data-cid="dTTDuS">Donut chart (Pie)</td>
+          <td data-cid="UqiG8R">Click the "Power Plants" segment to drill into 4 sub-sources (SADARA, SABIC, MARAFIQ, SWCC). Breadcrumb shows NOₓ Sources / Power Plants. "← Back" restores top-level donut.</td>
+        </tr>
+        <tr data-cid="WVz4Lp">
+          <td data-cid="jGwxkt">VOC Speciation</td>
+          <td data-cid="9vki_X">Horizontal bar chart</td>
+          <td data-cid="UKravb">Click any VOC bar to cross-filter (dims all other bars to 30% opacity). Selected category highlighted at full opacity. Click again to deselect.</td>
+        </tr>
+        <tr data-cid="BYcdpu">
+          <td data-cid="uLOpH7">Weekly O₃ Pattern</td>
+          <td data-cid="xrmE1j">Grouped bar chart (Jubail + Dammam)</td>
+          <td data-cid="7S21MT">Click a day bar to isolate that day (dims all other days). Region slicer controls whether Jubail, Dammam, or both series appear.</td>
+        </tr>
+        <tr data-cid="Aova2e">
+          <td data-cid="tCo0z9">Emission Source Table</td>
+          <td data-cid="0TaEPa">Data table</td>
+          <td data-cid="ZZImKa">Shows NOₓ source share, O₃ impact %, and trend for each source. Companion to the donut chart.</td>
+        </tr>
+        <tr data-cid="v0cWhn">
+          <td data-cid="SdHtrB">VOC Class Table</td>
+          <td data-cid="MzWngV">Data table</td>
+          <td data-cid="hvVYGU">Shows VOC class, share, reactivity rating (High/Med/Low), and Maximum Incremental Reactivity (MIR) estimate.</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- Page 3 -->
+    <h3 id="s4c" data-cid="rnbbih">4.3 Page 3 — Ozone Chemistry</h3>
+    <p data-cid="mZsofR"><strong data-cid="HbNQ5P">Route:</strong> <code data-cid="AwLQ0R">#/chemistry</code></p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="zNvx2f"><table data-cid="6oREk0">
+      <thead data-cid="GkWLor">
+        <tr data-cid="E2vrQ2"><th data-cid="frR38e">Chart</th><th data-cid="PwOwmn">Type</th><th data-cid="v9qn7h">Interaction</th></tr>
+      </thead>
+      <tbody data-cid="oU4Opu">
+        <tr data-cid="oGAzj5">
+          <td data-cid="YnfSf4">Monthly Seasonal Pattern</td>
+          <td data-cid="o2llTl">Dual-axis line chart</td>
+          <td data-cid="GREDcv">Click any month data point to cross-filter the temperature scatter plot. Selected month dot enlarges and gains a white ring. A metric slicer (All / O₃ / NOₓ / Temp) controls which series are visible.</td>
+        </tr>
+        <tr data-cid="JGkjvD">
+          <td data-cid="6jyZPI">Temperature vs O₃ Scatter</td>
+          <td data-cid="nVrxQV">Scatter chart</td>
+          <td data-cid="5kWZpV">Displays all 12 months as scatter points. When a month is selected in the seasonal chart, that point is highlighted (larger radius, drop shadow). Non-selected points rendered at 25% opacity. R² = 0.94 shown in footer.</td>
+        </tr>
+        <tr data-cid="jnbuU6">
+          <td data-cid="FbMivA">Monthly Chemistry Table</td>
+          <td data-cid="h86l6W">Interactive data table</td>
+          <td data-cid="qmzbVi">Click any row to select/deselect a month — drives the same cross-filter as clicking the chart. Shows Temp, O₃, NOₓ, UV Index, Status, and Exceedance days for all 12 months. Selected row highlighted with left-border accent.</td>
+        </tr>
+        <tr data-cid="q1MFpM">
+          <td data-cid="zQKZ2U">Metric Filter Slicer</td>
+          <td data-cid="nxe4nc">Button group</td>
+          <td data-cid="yGczAD">Toggle between All / O₃ only / NOₓ only / Temp only to declutter the seasonal line chart.</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- Page 4 -->
+    <h3 id="s4d" data-cid="YKGDLG">4.4 Page 4 — Analytics</h3>
+    <p data-cid="oPHpT3"><strong data-cid="Pc5M5r">Route:</strong> <code data-cid="jmnglR">#/analytics</code></p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="Lg_VNi"><table data-cid="zgVV5N">
+      <thead data-cid="LhkGAA">
+        <tr data-cid="DQSENC"><th data-cid="ecb1OS">Chart</th><th data-cid="TQDMpG">Type</th><th data-cid="Dx3OVd">Interaction</th></tr>
+      </thead>
+      <tbody data-cid="AJzK6y">
+        <tr data-cid="AQbofd">
+          <td data-cid="7pj7IJ">Annual Mean O₃ &amp; Exceedances (2015–2026)</td>
+          <td data-cid="nXem3t">Dual-axis line chart</td>
+          <td data-cid="OCgiZt">Click any year point to isolate it. Left Y-axis (red) = Annual Mean O₃ µg/m³. Right Y-axis (amber) = Exceedance day count. WHO standard reference line at 120 µg/m³. Year detail panel appears in sidebar when selected.</td>
+        </tr>
+        <tr data-cid="aaOykW">
+          <td data-cid="yG8GBS">Year Summary Panel</td>
+          <td data-cid="fs5fDZ">Stat cards</td>
+          <td data-cid="buDyBB">Always-visible: CAGR (+6.9%/yr), Peak Year (2026), WHO Days Exceeded (189), Baseline (88 µg/m³), Current (183 µg/m³), Total Increase (+108%). Dynamic year detail panel appears on year selection.</td>
+        </tr>
+        <tr data-cid="FtBnPc">
+          <td data-cid="Pj9Z-M">O₃ Reduction Scenarios</td>
+          <td data-cid="yhKbiE">Vertical bar chart</td>
+          <td data-cid="iJ0Y6e">4 scenarios: Baseline (183), VOC −30% (143), NOₓ −30% (168), Combined (127). Click any non-baseline bar to drill into a step-by-step reduction pathway (horizontal waterfall-style bar chart). "← Back" restores scenario overview.</td>
+        </tr>
+        <tr data-cid="rvZzOk">
+          <td data-cid="8ECWcY">Scenario Impact Matrix</td>
+          <td data-cid="AunaTI">Data table</td>
+          <td data-cid="rsPhpt">Shows O₃ result, reduction %, WHO compliance (YES/NO badge), and cost estimate per scenario. Click a row to cross-select the corresponding bar in the scenario chart.</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- Page 5 -->
+    <h3 id="s4e" data-cid="YHC3m6">4.5 Page 5 — Alerts &amp; Health</h3>
+    <p data-cid="UO5Acw"><strong data-cid="hdhnrW">Route:</strong> <code data-cid="RgVRC5">#/alerts</code></p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="sDuTeq"><table data-cid="EHVrpO">
+      <thead data-cid="tUchnA">
+        <tr data-cid="8twuEv"><th data-cid="P2cqMS">Component</th><th data-cid="gJj7dY">Description</th></tr>
+      </thead>
+      <tbody data-cid="3I3h3T">
+        <tr data-cid="xcgtA2">
+          <td data-cid="3M1J9b">Severity Slicer</td>
+          <td data-cid="PO7g1k">5-button group: All / CRITICAL / DANGER / WARNING / INFO. Each button shows the unacknowledged count. Clicking filters the alert list below.</td>
+        </tr>
+        <tr data-cid="DdCiZu">
+          <td data-cid="770TV6">Alert Summary KPI Cards (×4)</td>
+          <td data-cid="sdqwXZ">One card per severity level showing total count, unacknowledged count, colored by severity (CRITICAL = dark red, DANGER = red, WARNING = amber, INFO = blue). Click to filter.</td>
+        </tr>
+        <tr data-cid="Nxd8vC">
+          <td data-cid="rtOA1A">Active Alert List</td>
+          <td data-cid="yJntY7">5 alerts pre-loaded with: ID, location, message, measured value, threshold, exceedance %, timestamp, and acknowledged status. Click any alert to expand the detail panel in the sidebar. Click ACK button to mark as acknowledged (UI state update, no backend call).</td>
+        </tr>
+        <tr data-cid="CVJ-Wz">
+          <td data-cid="nu7SLC">Alert Detail Panel</td>
+          <td data-cid="Y6goFj">Sidebar panel showing selected alert's full details: ID, location, measured O₃, threshold, exceedance %, and timestamp.</td>
+        </tr>
+        <tr data-cid="BVpJXc">
+          <td data-cid="VDNnWg">Health Impact Guide</td>
+          <td data-cid="kG6Ax3">5-tier breakpoint panel: Good (0–60), Moderate (60–100), High (100–140), Very High (140–180), Hazardous (180+). Current condition (Very High and Hazardous) pulsing highlighted.</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ── Section 5 ── -->
+  <section id="s5" data-cid="11jgmN">
+    <h2 data-cid="wEesmm"><span class="sec-num" data-cid="wFwqqy">5</span> Power BI Features Implemented</h2>
+    <p data-cid="ARVHl7">
+      The following Power BI Desktop interaction paradigms are implemented in this web dashboard:
+    </p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="m-blto"><table data-cid="8LGvSd">
+      <thead data-cid="4lse9H">
+        <tr data-cid="XAJ54A"><th data-cid="AQ5Lsz">Power BI Feature</th><th data-cid="eiw26v">Implementation in OZ ONE</th><th data-cid="JLzZps">Pages</th></tr>
+      </thead>
+      <tbody data-cid="aBnPXZ">
+        <tr data-cid="WV1b_x">
+          <td data-cid="WeVSGs">Visual Drill Down</td>
+          <td data-cid="gmOq1e">3-level hierarchy on the main trend chart: Region → Station → Hourly. Activated by clicking AQI gauge or station bar. Breadcrumb shows the current drill path.</td>
+          <td data-cid="U8W9vN">Dashboard</td>
+        </tr>
+        <tr data-cid="obOpOU">
+          <td data-cid="XrS4hX">Drill Up (Back)</td>
+          <td data-cid="EGN2kw">"← Back" button on every drilled chart card. Removes the active filter chip and restores the parent view.</td>
+          <td data-cid="n3-5ex">Dashboard, Precursors, Analytics</td>
+        </tr>
+        <tr data-cid="fwY3kj">
+          <td data-cid="q2wJWI">Cross-Filtering</td>
+          <td data-cid="duazQ2">Clicking a chart element filters related charts on the same page. Unselected items dim to 30% opacity. Active filter shown as a chip above charts.</td>
+          <td data-cid="EQj5_C">All pages</td>
+        </tr>
+        <tr data-cid="CYosM6">
+          <td data-cid="njOYg_">Slicers</td>
+          <td data-cid="X4mg2f">Global Region slicer (All/Jubail/Dammam) and Time Range slicer (24h/7d/30d/1y) in the top header bar apply to all pages simultaneously. Per-page metric slicers on Chemistry page.</td>
+          <td data-cid="IcAmZi">All pages (global)</td>
+        </tr>
+        <tr data-cid="-F1JM1">
+          <td data-cid="KreL2N">KPI Cards with Sparklines</td>
+          <td data-cid="pXI2M6">6 KPI cards on the dashboard, each with: current value, unit, AQI status badge, 8-point inline sparkline, delta % vs previous period, and trend arrow.</td>
+          <td data-cid="Mb3ACn">Dashboard</td>
+        </tr>
+        <tr data-cid="yMkCfA">
+          <td data-cid="7DOgDn">Breadcrumb Navigation</td>
+          <td data-cid="0xxnlT">Every drillable chart card shows a breadcrumb bar below the title. Intermediate crumbs are clickable to jump back.</td>
+          <td data-cid="vHz7z6">Dashboard, Precursors, Analytics</td>
+        </tr>
+        <tr data-cid="haHTcj">
+          <td data-cid="3RtWJb">Cross-Filter Chips</td>
+          <td data-cid="mC8rs8">Active filters shown as removable pill badges above the main chart area. Each chip has an × button to clear just that filter.</td>
+          <td data-cid="qF1aT1">All pages</td>
+        </tr>
+        <tr data-cid="3gDVI7">
+          <td data-cid="IxjXy4">Rich Tooltips</td>
+          <td data-cid="kqgska">Every chart displays custom-styled tooltips on hover showing all series values, units, and contextual labels with the dashboard's dark glassmorphism style.</td>
+          <td data-cid="kWm2Dd">All pages</td>
+        </tr>
+        <tr data-cid="eDrC68">
+          <td data-cid="pPELXZ">Reference Lines</td>
+          <td data-cid="wTY4PI">WHO O₃ standard (120 µg/m³) rendered as a dashed reference line on every O₃ chart, labeled in teal.</td>
+          <td data-cid="40IZRn">Dashboard, Chemistry, Analytics</td>
+        </tr>
+        <tr data-cid="fQ2nZ5">
+          <td data-cid="OSL0On">Dual-Axis Charts</td>
+          <td data-cid="h0N6nv">Long-term trend chart uses left Y-axis for Annual Mean O₃ (red) and right Y-axis for Exceedance Count (amber). Seasonal chart adds a right axis for Temperature.</td>
+          <td data-cid="hJVGbm">Analytics, Chemistry</td>
+        </tr>
+        <tr data-cid="auqkRq">
+          <td data-cid="tequ5O">Status / Live Badge</td>
+          <td data-cid="j1Bl0e">Pulsing "LIVE" badge in the header. Status bar at the bottom shows last refresh time (updated every 30 s), stations online count, and data source attribution.</td>
+          <td data-cid="29Pst_">All pages (global)</td>
+        </tr>
+        <tr data-cid="yCojzo">
+          <td data-cid="kjhvtv">Export Button</td>
+          <td data-cid="owxFpH">"↓ CSV" button on drillable chart cards. "Export" button in global header bar (visual affordance — can be wired to a data export function).</td>
+          <td data-cid="zwVuQ7">All pages</td>
+        </tr>
+        <tr data-cid="4CxJaV">
+          <td data-cid="Iuw4bH">AQI Severity Color Coding</td>
+          <td data-cid="BPed2c">Semantic color system: teal = GOOD (&lt;60), amber = MODERATE/HIGH (60–180), red = VERY HIGH/HAZARDOUS (&gt;180). Applied consistently to gauge arcs, bar fills, status badges, KPI values, and table cells.</td>
+          <td data-cid="P8SRZM">All pages</td>
+        </tr>
+        <tr data-cid="Gjx39r">
+          <td data-cid="K0zfTy">Interactive Data Table</td>
+          <td data-cid="WLqXWQ">Station status table, emission source tables, and monthly chemistry table — all clickable rows that trigger cross-filters and drill-downs.</td>
+          <td data-cid="4L5lk7">Dashboard, Precursors, Chemistry, Analytics</td>
+        </tr>
+        <tr data-cid="5o1cYW">
+          <td data-cid="f1GwoY">Alert Acknowledgment Workflow</td>
+          <td data-cid="HX48E_">In-dashboard alert queue with ACK button that marks alerts as acknowledged (greys them out). Severity filter slicer with unacknowledged counts. Alert detail sidebar on row click.</td>
+          <td data-cid="Y2L8Nv">Alerts</td>
+        </tr>
+        <tr data-cid="_yk9WH">
+          <td data-cid="oUdvu6">Scenario Analysis</td>
+          <td data-cid="FwsH62">4-scenario mitigation bar chart with drill into step-by-step reduction pathway. Scenario matrix table with WHO compliance badge (YES/NO) and cost estimate.</td>
+          <td data-cid="kM1wYc">Analytics</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ── Section 6 ── -->
+  <section id="s6" data-cid="-06DCP">
+    <h2 data-cid="grl8Y0"><span class="sec-num" data-cid="4lLHtS">6</span> Global Slicer Controls</h2>
+    <p data-cid="R2_gFI">
+      The top header bar contains two global slicers that affect all pages simultaneously:
+    </p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="Wi7yPs"><table data-cid="YxpvCM">
+      <thead data-cid="Is7MWK">
+        <tr data-cid="xMpKY2"><th data-cid="LAAR9-">Slicer</th><th data-cid="CMPg5d">Options</th><th data-cid="LQdgAf">Effect</th></tr>
+      </thead>
+      <tbody data-cid="9wtxcL">
+        <tr data-cid="-HHrRb">
+          <td data-cid="FAgACF">Region Slicer</td>
+          <td data-cid="v7Lwu6">All Regions / Jubail / Dammam</td>
+          <td data-cid="WJ6_V3">Filters which region's data series are shown on the 24h trend, weekly pattern bar chart, and KPI cards. Defaults to "All Regions".</td>
+        </tr>
+        <tr data-cid="Qq9dZ8">
+          <td data-cid="vpZeJY">Time Range Slicer</td>
+          <td data-cid="g2t1O5">24h / 7d / 30d / 1y</td>
+          <td data-cid="wIxa2e">Controls the time window of the 24-hour trend chart on the Dashboard page. The 24h option shows all 24 hourly data points; other options sample the data accordingly. Defaults to "24h".</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <p data-cid="7DKiDT">
+      Slicer state is managed in <code data-cid="eLySAF">App.tsx</code> using React <code data-cid="dX9J_y">useState</code> hooks and passed
+      down as props to each page component, ensuring all pages respond immediately to any slicer change
+      without a page reload.
+    </p>
+  </section>
+
+  <!-- ── Section 7 ── -->
+  <section id="s7" data-cid="MYlHVG">
+    <h2 data-cid="vHsoci"><span class="sec-num" data-cid="16Rmd8">7</span> Design System &amp; Color Semantics</h2>
+
+    <h3 data-cid="yXIMtD">7.1 AQI Color Scale</h3>
+    <p data-cid="Fb-R_W">
+      All visual elements use a consistent 5-tier color scale derived from air quality standards.
+      The <code data-cid="6n2FFk">getAqiStatus()</code> and <code data-cid="Cpk7wj">getStatusColor()</code> helper functions in
+      <code data-cid="gCKxK5">src/lib/index.ts</code> map any O₃ value to its semantic color automatically:
+    </p>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="VCqmj-"><table data-cid="bcXjrL">
+      <thead data-cid="l8-2wu">
+        <tr data-cid="BrOeK5"><th data-cid="Slwqgs">Status</th><th data-cid="VhVBRy">O₃ Range (µg/m³)</th><th data-cid="MM3xOJ">Color</th><th data-cid="uY_-R6">Hex</th><th data-cid="M7YIcq">Usage</th></tr>
+      </thead>
+      <tbody data-cid="d7G0e9">
+        <tr data-cid="Vq6Yr7">
+          <td data-cid="LdG6iH"><span class="pill pill-teal" data-cid="v0Hjjf">GOOD</span></td>
+          <td data-cid="qM_j7i">0 – 59</td>
+          <td data-cid="SAYw_b">Teal</td>
+          <td data-cid="ZSJUxu"><code data-cid="NOpUqQ">#3af0b5</code></td>
+          <td data-cid="MAFne_">WHO reference lines, safe indicators</td>
+        </tr>
+        <tr data-cid="TBstz7">
+          <td data-cid="RBSgBJ"><span class="pill pill-amber" data-cid="RurDTt">MODERATE</span></td>
+          <td data-cid="E6TTcb">60 – 99</td>
+          <td data-cid="2GrAGt">Amber-green</td>
+          <td data-cid="cJ_hai"><code data-cid="z0gO7i">#a8d8a8</code></td>
+          <td data-cid="GPr5Se">Secondary caution states</td>
+        </tr>
+        <tr data-cid="-w4FOj">
+          <td data-cid="ptSfH_"><span class="pill pill-amber" data-cid="dGpSlu">HIGH</span></td>
+          <td data-cid="eVkFms">100 – 139</td>
+          <td data-cid="7Z3gd9">Amber</td>
+          <td data-cid="SwwnK8"><code data-cid="6RY6ye">#f5a623</code></td>
+          <td data-cid="mXY9_r">Warning states, temperature axis</td>
+        </tr>
+        <tr data-cid="-a2rmv">
+          <td data-cid="9uI8B7"><span class="pill pill-red" data-cid="GqZJ3V">VERY HIGH</span></td>
+          <td data-cid="ey-se7">140 – 179</td>
+          <td data-cid="xYVhcu">Orange-red</td>
+          <td data-cid="6Ib9S8"><code data-cid="oNDuFI">#ff8c42</code></td>
+          <td data-cid="MH5dAi">Current Dammam level</td>
+        </tr>
+        <tr data-cid="TWl9Ve">
+          <td data-cid="O086IK"><span class="pill pill-red" data-cid="BSymug">HAZARDOUS</span></td>
+          <td data-cid="2AQlGa">180+</td>
+          <td data-cid="8HaNOt">Red</td>
+          <td data-cid="PBsMn0"><code data-cid="Hp_jYA">#ff4f4f</code></td>
+          <td data-cid="LG7NOM">Current Jubail level — all primary danger elements</td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="-dSsP8">7.2 Chart Color Palette</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="3dPB73"><table data-cid="1T-hJO">
+      <thead data-cid="Vyk_QW">
+        <tr data-cid="8q4Md4"><th data-cid="uE5O2Y">Token</th><th data-cid="uns15L">Hex</th><th data-cid="vaCi4l">Usage</th></tr>
+      </thead>
+      <tbody data-cid="67z3lo">
+        <tr data-cid="kSu7Ka"><td data-cid="J1dSbm"><code data-cid="LAKGj1">--chart-1</code> / <code data-cid="ugAXI8">--accent</code></td><td data-cid="ADNHo6">#6082ff</td><td data-cid="PAmTVF">Primary data series, NOₓ Power Plants, interactive elements</td></tr>
+        <tr data-cid="PVtbRk"><td data-cid="pYt1bo"><code data-cid="19Iivg">--chart-2</code> / teal</td><td data-cid="di68Qf">#3af0b5</td><td data-cid="eOvKRz">WHO standard lines, safe state, positive trends</td></tr>
+        <tr data-cid="ZG-Nnl"><td data-cid="kE2C49"><code data-cid="obh3ze">--chart-3</code> / amber</td><td data-cid="B6tjJi">#f5a623</td><td data-cid="euT4X2">Dammam series, exceedance counts, temperature axis</td></tr>
+        <tr data-cid="qGHMiZ"><td data-cid="bOS_C8"><code data-cid="tvdheM">--chart-4</code> / purple</td><td data-cid="joFAvu">#9b59b6</td><td data-cid="a5uqSW">Oxygenates VOC class, chart-5 accent</td></tr>
+        <tr data-cid="LG6qJ7"><td data-cid="7XGmhB"><code data-cid="Vdw75W">--chart-5</code> / danger</td><td data-cid="9q2XIl">#ff4f4f</td><td data-cid="6YEx5H">Jubail series, hazardous indicators, CRITICAL alerts</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="ccYVVN">7.3 Typography</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="RjcnXq"><table data-cid="66AwL9">
+      <thead data-cid="_wKwR0">
+        <tr data-cid="VcHxIC"><th data-cid="0x9zze">Font</th><th data-cid="N_IiTb">Usage</th><th data-cid="NC6da-">Weight</th></tr>
+      </thead>
+      <tbody data-cid="7OblxD">
+        <tr data-cid="uVl9hp"><td data-cid="9RHZla">Syne (Sans)</td><td data-cid="-e7GFX">All headings, navigation, page titles</td><td data-cid="ktCd4Z">400, 600, 700, 800</td></tr>
+        <tr data-cid="NLrqP7"><td data-cid="aOdE4_">JetBrains Mono</td><td data-cid="6m4dDI">All numerical data, status badges, timestamps, code, KPI labels, axis ticks</td><td data-cid="IINnGG">400, 500, 700</td></tr>
+        <tr data-cid="TYsxjm"><td data-cid="Qvzvjc">Inter (fallback)</td><td data-cid="5I0noP">UI text in dense panels when Syne unavailable</td><td data-cid="55mEf_">400, 500, 600</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="a7cZ0R">7.4 Dark Theme</h3>
+    <p data-cid="ujK1TM">
+      The dashboard uses a <strong data-cid="hTf1Od">dark-mode-first</strong> theme set via <code data-cid="CyGyO4">&lt;html class="dark"&gt;</code>
+      in <code data-cid="O8baPh">index.html</code>. The Tailwind v4 <code data-cid="7jyKXy">.dark</code> CSS block provides all dark
+      token overrides. The background is deep navy (<code data-cid="KrlMji">oklch(0.12 0.025 228)</code>) with card surfaces
+      at <code data-cid="fVf7P-">oklch(0.16 0.028 228)</code>, creating visual depth between layers.
+    </p>
+  </section>
+
+  <!-- ── Section 8 ── -->
+  <section id="s8" data-cid="UyJA3f">
+    <h2 data-cid="_YMcWq"><span class="sec-num" data-cid="gS3egD">8</span> Data Reference</h2>
+
+    <h3 data-cid="GQqDAO">8.1 Current Readings (as of dashboard baseline)</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="BvUBAs"><table data-cid="-d3_R8">
+      <thead data-cid="f3l5KP">
+        <tr data-cid="-tqZPY"><th data-cid="HfPpVi">Metric</th><th data-cid="DtiHya">Jubail</th><th data-cid="vSIFuK">Dammam</th><th data-cid="JbPKEg">WHO Standard</th></tr>
+      </thead>
+      <tbody data-cid="X_jy_G">
+        <tr data-cid="TcALtU"><td data-cid="VlcR0r">Current O₃</td><td data-cid="UFG7pM">183 µg/m³</td><td data-cid="aUmBf3">165 µg/m³</td><td data-cid="_KdsYO">120 µg/m³</td></tr>
+        <tr data-cid="5nYP8M"><td data-cid="btBR_z">24h Peak O₃</td><td data-cid="68TMhQ">189 µg/m³ (13:00)</td><td data-cid="IHmTTM">170 µg/m³ (13:00)</td><td data-cid="f-JsLy">—</td></tr>
+        <tr data-cid="XHz7Go"><td data-cid="AUJw2a">Temperature</td><td data-cid="z95LcO">41°C</td><td data-cid="JbopbI">38°C</td><td data-cid="fizSr5">—</td></tr>
+        <tr data-cid="_LISFv"><td data-cid="NyHj-5">Wind Speed</td><td data-cid="YGm7ff">12 km/h NW</td><td data-cid="UCUjOR">14 km/h NW</td><td data-cid="pUB-CW">—</td></tr>
+        <tr data-cid="EgIAzj"><td data-cid="BmEfar">Humidity</td><td data-cid="JsWC4n">28%</td><td data-cid="ZpWT6k">32%</td><td data-cid="JvtdZ7">—</td></tr>
+        <tr data-cid="0_RVZ-"><td data-cid="SBYrHV">Exceedances Today</td><td colspan="2" data-cid="AXIRLQ">8 stations exceeding 120 µg/m³</td><td data-cid="B2WNwv">0 target</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="Ssfv8r">8.2 Monitoring Stations</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="P7ybgA"><table data-cid="wn51Q4">
+      <thead data-cid="SF58T6">
+        <tr data-cid="QpfYfm"><th data-cid="WvnPsf">Station ID</th><th data-cid="bqwEfd">Name</th><th data-cid="H5uCEn">Region</th><th data-cid="5A0la7">Current O₃</th><th data-cid="ut4ULW">Status</th></tr>
+      </thead>
+      <tbody data-cid="Jnp-Ys">
+        <tr data-cid="tl-cEW"><td data-cid="R5tdFt">ST-J01</td><td data-cid="TV8bza">Industrial Zone</td><td data-cid="VaI3HS">Jubail</td><td data-cid="tkK9aV">183 µg/m³</td><td data-cid="OnFD3I"><span class="pill pill-red" data-cid="EbJMK1">VERY HIGH</span></td></tr>
+        <tr data-cid="cCqFTA"><td data-cid="nNJAzY">ST-J02</td><td data-cid="_cnHKm">Petrochemical Hub</td><td data-cid="k2VMt3">Jubail</td><td data-cid="GfMQjn">171 µg/m³</td><td data-cid="AUFAtw"><span class="pill pill-red" data-cid="7k0xLJ">VERY HIGH</span></td></tr>
+        <tr data-cid="vR6ZTg"><td data-cid="HcWape">ST-J03</td><td data-cid="rt_Xz5">Port Area</td><td data-cid="4bruIR">Jubail</td><td data-cid="D1-U35">196 µg/m³</td><td data-cid="QCWVJu"><span class="pill pill-red" data-cid="oyc1oW">VERY HIGH</span></td></tr>
+        <tr data-cid="H09wNg"><td data-cid="VX1YMJ">ST-J04</td><td data-cid="3vNt4N">Residential N</td><td data-cid="DaqgZX">Jubail</td><td data-cid="vmmuKD">168 µg/m³</td><td data-cid="LRo6f6"><span class="pill pill-amber" data-cid="I8JqPX">HIGH</span></td></tr>
+        <tr data-cid="UAdgH7"><td data-cid="SO5bfO">ST-J05</td><td data-cid="xb_X65">Residential S</td><td data-cid="fPJ5KR">Jubail</td><td data-cid="EVQ0Kw">178 µg/m³</td><td data-cid="CAhBox"><span class="pill pill-amber" data-cid="OsCv5B">HIGH</span></td></tr>
+        <tr data-cid="6qb_do"><td data-cid="PDozm4">ST-D01</td><td data-cid="zUD2k2">Downtown</td><td data-cid="wCPIvk">Dammam</td><td data-cid="ijhFEq">165 µg/m³</td><td data-cid="f9OFcM"><span class="pill pill-amber" data-cid="JYlVQ_">HIGH</span></td></tr>
+        <tr data-cid="7GJfVf"><td data-cid="RGTMpy">ST-D02</td><td data-cid="XrhgP_">Corniche</td><td data-cid="KlNeLB">Dammam</td><td data-cid="enOx55">157 µg/m³</td><td data-cid="YXHnZC"><span class="pill pill-amber" data-cid="nESQvX">HIGH</span></td></tr>
+        <tr data-cid="7HduQK"><td data-cid="SGAWUe">ST-D03</td><td data-cid="XU0TwZ">Al-Khobar N</td><td data-cid="T_UJhv">Dammam</td><td data-cid="XD2Y8g">172 µg/m³</td><td data-cid="0SgYu9"><span class="pill pill-amber" data-cid="Wp0rul">HIGH</span></td></tr>
+        <tr data-cid="nSFzbn"><td data-cid="goiCOt">ST-D04</td><td data-cid="cdWITd">Industrial W</td><td data-cid="tJ1Fd_">Dammam</td><td data-cid="pP99Wm">160 µg/m³</td><td data-cid="NZhWFS"><span class="pill pill-amber" data-cid="cu9wW2">HIGH</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="ax-Ogv">8.3 Key Long-Term Statistics (2015–2026)</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="ekVY4z"><table data-cid="YhtcZG">
+      <thead data-cid="HeP7Lv">
+        <tr data-cid="6_69hS"><th data-cid="ET5bIm">Year</th><th data-cid="h2U5rB">Annual Mean O₃ (µg/m³)</th><th data-cid="fa5uLw">Exceedance Days</th></tr>
+      </thead>
+      <tbody data-cid="HUBLeA">
+        <tr data-cid="oztCu_"><td data-cid="VOqjzg">2015</td><td data-cid="zzsRYQ">88</td><td data-cid="3TbaX4">22</td></tr>
+        <tr data-cid="RVw8cw"><td data-cid="u6UDE3">2018</td><td data-cid="9mfWh7">118</td><td data-cid="VdZ0eE">72</td></tr>
+        <tr data-cid="2tEtF8"><td data-cid="ebIcKe">2021</td><td data-cid="_ZO0c_">142</td><td data-cid="UK8xHb">118</td></tr>
+        <tr data-cid="kCcEt8"><td data-cid="qbwJ0W">2024</td><td data-cid="QXgVBm">171</td><td data-cid="dryEP7">172</td></tr>
+        <tr data-cid="4RPoGE"><td data-cid="P9UM6u">2026</td><td data-cid="sJ7Jkw">183</td><td data-cid="PTvk5t">189</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="qeRXtP">8.4 Mitigation Scenarios</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="Fa86kn"><table data-cid="w0QCvc">
+      <thead data-cid="uDTgyn">
+        <tr data-cid="tZkGEW"><th data-cid="8W8Gjs">Scenario</th><th data-cid="qkDCpW">O₃ Result</th><th data-cid="Uxs06P">Reduction vs Baseline</th><th data-cid="QNRGfo">WHO Compliant</th><th data-cid="s2J9hd">Estimated Cost</th></tr>
+      </thead>
+      <tbody data-cid="dz7ACs">
+        <tr data-cid="rdht3O"><td data-cid="nyVgmw">Baseline</td><td data-cid="C1S2DK">183 µg/m³</td><td data-cid="eR_B4A">—</td><td data-cid="vm3QQK">No</td><td data-cid="AR0pDq">—</td></tr>
+        <tr data-cid="AFTJm0"><td data-cid="FVyvs4">VOC −30%</td><td data-cid="gpnSRO">143 µg/m³</td><td data-cid="AlQ11U">−21.9%</td><td data-cid="zIMcDd">No</td><td data-cid="uGZJX1">$2.1 B</td></tr>
+        <tr data-cid="s-60gu"><td data-cid="IvgpeU">NOₓ −30%</td><td data-cid="2O_2_Q">168 µg/m³</td><td data-cid="YO-7pE">−8.2%</td><td data-cid="tZPFHM">No</td><td data-cid="B-9zxZ">$1.4 B</td></tr>
+        <tr data-cid="yW933I"><td data-cid="H34sqP">Combined</td><td data-cid="FWzt6D">127 µg/m³</td><td data-cid="jItlNu">−30.6%</td><td data-cid="CqgR1v">No (−7 µg/m³ short)</td><td data-cid="MxSsyc">$3.2 B</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ── Section 9 ── -->
+  <section id="s9" data-cid="OQdjQv">
+    <h2 data-cid="eKQeYj"><span class="sec-num" data-cid="DcG5zj">9</span> Browser Usage Guide</h2>
+
+    <h3 data-cid="48jXVx">9.1 Opening the Dashboard in Chrome</h3>
+    <ol data-cid="rOsZnm">
+      <li data-cid="JuNaZZ">Open Google Chrome.</li>
+      <li data-cid="Rh5Zq3">Click the address bar (or press <code data-cid="aeLEm7">Ctrl+L</code> / <code data-cid="ZenUAu">Cmd+L</code> on Mac).</li>
+      <li data-cid="vTHShQ">Type or paste the URL: <strong data-cid="nIDfHk">https://b5kssqqhxq.skywork.website</strong></li>
+      <li data-cid="C_Zpqn">Press <code data-cid="VJxf35">Enter</code>. The dashboard loads in 2–4 seconds.</li>
+    </ol>
+
+    <div class="url-box" data-cid="B7TJGu">
+      <span class="label" data-cid="hHnCT_">Paste into Chrome</span>
+      <a href="https://b5kssqqhxq.skywork.website" target="_blank" rel="noopener" data-cid="XXCIbi">
+        https://b5kssqqhxq.skywork.website
+      </a>
+    </div>
+
+    <h3 data-cid="71Tr9M">9.2 Navigating the Dashboard</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="ZXfXtt"><table data-cid="Exqq49">
+      <thead data-cid="Ry5Rvh">
+        <tr data-cid="hJqolE"><th data-cid="P3f6X0">Action</th><th data-cid="PLga7m">How to do it</th></tr>
+      </thead>
+      <tbody data-cid="aPGloB">
+        <tr data-cid="Vn2Y4L"><td data-cid="wzitPs">Switch pages</td><td data-cid="8AGxtO">Click any tab in the navigation bar (DASHBOARD / PRECURSOR SOURCES / OZONE CHEMISTRY / ANALYTICS / ALERTS &amp; HEALTH)</td></tr>
+        <tr data-cid="4yO9FJ"><td data-cid="p0EauE">Filter by region</td><td data-cid="DSIwgQ">Click All Regions / Jubail / Dammam in the top header slicer</td></tr>
+        <tr data-cid="SbgYsb"><td data-cid="mpPIsr">Change time range</td><td data-cid="0n6Thq">Click 24h / 7d / 30d / 1y in the header slicer</td></tr>
+        <tr data-cid="U-gA6G"><td data-cid="-pA8EG">Drill into a chart</td><td data-cid="19xDtm">Click an AQI gauge, bar segment, or chart data point — a breadcrumb appears</td></tr>
+        <tr data-cid="CS9kWQ"><td data-cid="TQwT5A">Go back up</td><td data-cid="MVexXl">Click the "← Back" button on the chart card, or click × on the filter chip</td></tr>
+        <tr data-cid="9x05UC"><td data-cid="7OT_ZY">Cross-filter</td><td data-cid="JCV_tD">Click any legend item, pie segment, or bar to highlight it and dim others</td></tr>
+        <tr data-cid="quDAAu"><td data-cid="VCS8fQ">View tooltips</td><td data-cid="LHc_7Z">Hover over any data point on any chart</td></tr>
+        <tr data-cid="7QxYS2"><td data-cid="DVTcCi">Acknowledge an alert</td><td data-cid="yR5Nwp">Go to Alerts &amp; Health page → click ACK button on any unacknowledged alert</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 data-cid="nH26rA">9.3 Keyboard Shortcuts</h3>
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="JhMraZ"><table data-cid="xFSpfH">
+      <thead data-cid="i7EamV">
+        <tr data-cid="3lgcms"><th data-cid="fM8CC8">Shortcut</th><th data-cid="gOKZLV">Action</th></tr>
+      </thead>
+      <tbody data-cid="dW5M3J">
+        <tr data-cid="Su5ew0"><td data-cid="CDNR4r"><code data-cid="e8Sdq8">Ctrl+R</code></td><td data-cid="hwstXh">Reload the dashboard (resets all drill-down and filter state)</td></tr>
+        <tr data-cid="BiQ7SY"><td data-cid="CRGJjC"><code data-cid="78pr9J">Ctrl+0</code></td><td data-cid="w_lRCu">Reset Chrome zoom to 100%</td></tr>
+        <tr data-cid="6qMON9"><td data-cid="BPpyin"><code data-cid="PTY-FN">F11</code></td><td data-cid="p2qq8l">Full-screen mode (recommended for presentation)</td></tr>
+        <tr data-cid="mg67z7"><td data-cid="uBDfhx"><code data-cid="gWE3Gy">Ctrl+Shift+J</code></td><td data-cid="ofQOla">Open Chrome DevTools console (for developer debugging)</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="callout warn" data-cid="KsiIc0">
+      <strong data-cid="eZGgpk">Note on Data</strong>
+      All data in this dashboard is static (defined in <code data-cid="xCNFCk">src/data/index.ts</code>). The "LIVE" badge and refresh timer are cosmetic — they do not pull from a live API. To connect to a live backend, replace the data constants with API fetch calls (e.g., using React Query or SWR with a RCEC/PME endpoint).
+    </div>
+  </section>
+
+  <!-- ── Section 10 ── -->
+  <section id="s10" data-cid="7hSrIG">
+    <h2 data-cid="JRAFVt"><span class="sec-num" data-cid="9m2F8I">10</span> Future Enhancements</h2>
+
+    <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="HKlF8h"><table data-cid="dTJcP1">
+      <thead data-cid="Ou_kJH">
+        <tr data-cid="SuPMAs"><th data-cid="cOvRXN">Enhancement</th><th data-cid="TTLBoC">Description</th><th data-cid="S3Q9Qg">Priority</th></tr>
+      </thead>
+      <tbody data-cid="CGQwCS">
+        <tr data-cid="xcv6NV">
+          <td data-cid="04NFiO">Live API Integration</td>
+          <td data-cid="5_M-kl">Connect to RCEC/PME real-time sensor API via React Query. Replace static <code data-cid="wiN6kW">src/data/index.ts</code> constants with SWR fetch hooks. Update every 5 minutes.</td>
+          <td data-cid="bePDH4"><span class="pill pill-red" data-cid="lVcrKA">HIGH</span></td>
+        </tr>
+        <tr data-cid="XOmcVH">
+          <td data-cid="hX_liK">Map View</td>
+          <td data-cid="mVtpdm">Add a 6th page with a Leaflet/Mapbox map showing all 9 stations as colored pins on a satellite base map of the industrial zones.</td>
+          <td data-cid="z3btO3"><span class="pill pill-red" data-cid="D2OL9v">HIGH</span></td>
+        </tr>
+        <tr data-cid="mXj-fv">
+          <td data-cid="G-Jnhl">Historical Export</td>
+          <td data-cid="m0FHjj">Wire the "↓ CSV" export buttons to generate and download actual CSV files from the visible chart data using the <code data-cid="j3UxoF">Blob</code> API.</td>
+          <td data-cid="3XHuIt"><span class="pill pill-amber" data-cid="90iabX">MEDIUM</span></td>
+        </tr>
+        <tr data-cid="Z9xHWo">
+          <td data-cid="KRBHup">User Authentication</td>
+          <td data-cid="A30Q7t">Add Supabase Auth to gate access to the dashboard, supporting government and industrial stakeholder logins.</td>
+          <td data-cid="Wqxw2i"><span class="pill pill-amber" data-cid="QvLAu_">MEDIUM</span></td>
+        </tr>
+        <tr data-cid="OGrPyk">
+          <td data-cid="fmnO2S">Email / SMS Alert Dispatch</td>
+          <td data-cid="d-yUHO">Integrate Supabase Edge Functions + Resend (or SMS gateway) to send real alert notifications when O₃ exceeds thresholds.</td>
+          <td data-cid="JFcadl"><span class="pill pill-amber" data-cid="Hkgjx3">MEDIUM</span></td>
+        </tr>
+        <tr data-cid="xiauXB">
+          <td data-cid="lAGZIy">PDF Report Generation</td>
+          <td data-cid="vcKqKF">Add a "Generate Report" button that exports the current dashboard state (charts + KPIs) as a formatted PDF using jsPDF or a Puppeteer edge function.</td>
+          <td data-cid="pNvxNC"><span class="pill pill-blue" data-cid="NCAM9N">LOW</span></td>
+        </tr>
+        <tr data-cid="eEMqWy">
+          <td data-cid="JMjdyG">Mobile Responsive Layout</td>
+          <td data-cid="TrePTC">Adapt the 6-column KPI grid and chart layouts to a stacked single-column layout for screens below 768px width.</td>
+          <td data-cid="2attty"><span class="pill pill-blue" data-cid="F5Piut">LOW</span></td>
+        </tr>
+        <tr data-cid="bHox18">
+          <td data-cid="3LLGMF">Forecast Module</td>
+          <td data-cid="wHqGVz">Add a 24–72 hour O₃ forecast chart using weather model data (temperature, wind, UV) via a Python ML endpoint.</td>
+          <td data-cid="z62f9m"><span class="pill pill-blue" data-cid="jqQ8ox">LOW</span></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <hr data-cid="oaWVME">
+
+  <p style="font-size:13px; color:var(--text3); text-align:center;" class="editor-empty-block" data-cid="jyee7z">
+    OZ ONE Unified System Documentation · Generated May 2, 2026 · v1.0.0<br data-cid="0OhDDR">
+    Built with React 18 + Recharts + Tailwind CSS v4 · Deployed on Skywork CDN
+  </p>
+
+</article>
+
+<div class="buildlog-page" data-cid="0WOfor">
+  <div class="buildlog-inner" data-cid="_UiWi-">
+
+    <div class="buildlog-header" data-cid="tL14C-">
+      <h2 data-cid="AOK1mY">Project Build Log &amp; Credit Usage</h2>
+      <div class="buildlog-header-meta editor-empty-block" data-cid="s97cOY">
+        Session Date: 02 May 2026<br data-cid="00QEkr">
+        Doc ID: OZ1-DOC-2026-001
+      </div>
+    </div>
+
+    <!-- Phase cards -->
+    <div class="phase-grid" data-cid="0SpaW1">
+
+      <div class="phase-card" data-cid="H2Pqdv">
+        <div class="phase-left" data-cid="afKRtR">
+          <div class="phase-num" data-cid="Ye8Tnn">Phase 01</div>
+          <div class="phase-name" data-cid="mf8t_U">Source File Extraction</div>
+          <div class="phase-tag blue" data-cid="Jeq84e">Analysis</div>
+        </div>
+        <div class="phase-right" data-cid="WFX6vj">
+          <div class="phase-ops" data-cid="NvzRsR">
+            <div class="phase-op" data-cid="NRNH_x"><span class="phase-op-bullet" data-cid="wlKlpm"></span><span class="phase-op-text" data-cid="SrZDLZ">Parsed uploaded <code data-cid="zY3M0Z">O3 dashboard.docx</code> — detected OLE Package embedded object</span></div>
+            <div class="phase-op" data-cid="mPiC93"><span class="phase-op-bullet" data-cid="nmKPjv"></span><span class="phase-op-text" data-cid="C4xynX">Extracted <code data-cid="t99cur">jubail_dammam_ozone_unified_system.html</code> from binary (50 KB, 1020 lines)</span></div>
+            <div class="phase-op" data-cid="Y7sELT"><span class="phase-op-bullet" data-cid="92YcMl"></span><span class="phase-op-text" data-cid="3LWVaO">Parsed all chart data arrays, KPI values, NOₓ/VOC/seasonal/long-term datasets</span></div>
+            <div class="phase-op" data-cid="AZScsl"><span class="phase-op-bullet teal" data-cid="qrNz4G"></span><span class="phase-op-detail" data-cid="KjhKFN">Tools: screenshot_page, bash (unzip + strings), python3 binary extraction</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card" data-cid="jsuz7p">
+        <div class="phase-left" data-cid="THVN9f">
+          <div class="phase-num" data-cid="Xt8t3X">Phase 02</div>
+          <div class="phase-name" data-cid="nv6dDM">Project Initialisation</div>
+          <div class="phase-tag blue" data-cid="dgoAhx">Setup</div>
+        </div>
+        <div class="phase-right" data-cid="9xSqzd">
+          <div class="phase-ops" data-cid="bo-wIP">
+            <div class="phase-op" data-cid="_YVSzy"><span class="phase-op-bullet" data-cid="9j4-d5"></span><span class="phase-op-text" data-cid="soErqi">Loaded <strong data-cid="JRjV54">website</strong> skill; called <code data-cid="WG_-qg">init_project</code> — React + Vite + Tailwind v4 + shadcn/ui scaffold</span></div>
+            <div class="phase-op" data-cid="TBxT5u"><span class="phase-op-bullet" data-cid="8msOUq"></span><span class="phase-op-text" data-cid="Ba_WjW">AI-generated dark design system: <code data-cid="GxWKI7">src/index.css</code> with OKLCH color tokens, Syne + JetBrains Mono fonts</span></div>
+            <div class="phase-op" data-cid="5QO7SB"><span class="phase-op-bullet" data-cid="_gyulR"></span><span class="phase-op-text" data-cid="PAj63L">Updated <code data-cid="z6VXxl">index.html</code> — dark class, OZ ONE title, meta tags</span></div>
+            <div class="phase-op" data-cid="ZatCy7"><span class="phase-op-bullet teal" data-cid="SzcTpe"></span><span class="phase-op-detail" data-cid="Q2Hgi5">Output: o3_powerbi_dashboard/ project skeleton, AGENTS.md, tsconfig, package.json</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card" data-cid="WgSH6Y">
+        <div class="phase-left" data-cid="lL129K">
+          <div class="phase-num" data-cid="mFzV3G">Phase 03</div>
+          <div class="phase-name" data-cid="zEt1cq">Application Code Generation</div>
+          <div class="phase-tag amber" data-cid="lf9bq7">Development</div>
+        </div>
+        <div class="phase-right" data-cid="5XTMzL">
+          <div class="phase-ops" data-cid="e9iF0L">
+            <div class="phase-op" data-cid="21SJuA"><span class="phase-op-bullet" data-cid="yv0gRW"></span><span class="phase-op-text" data-cid="Y6hsck"><code data-cid="ZfNE42">src/lib/index.ts</code> — ROUTE_PATHS, 8 types, AQI helper functions</span></div>
+            <div class="phase-op" data-cid="5WVC9Q"><span class="phase-op-bullet" data-cid="5YHxfv"></span><span class="phase-op-text" data-cid="eg7ahT"><code data-cid="xHw2c6">src/data/index.ts</code> — All 9-station dataset, 24h O₃, NOₓ/VOC, seasonal, long-term, alerts (242 lines)</span></div>
+            <div class="phase-op" data-cid="Axuj2r"><span class="phase-op-bullet" data-cid="U5G7f1"></span><span class="phase-op-text" data-cid="fCcGY-"><code data-cid="xCLJFw">src/components/Layout.tsx</code> — Header, region/time slicers, nav tabs, breadcrumb, status bar</span></div>
+            <div class="phase-op" data-cid="Y2v0AM"><span class="phase-op-bullet" data-cid="EuHCSA"></span><span class="phase-op-text" data-cid="q5G8KW"><code data-cid="rRcm1l">src/components/Cards.tsx</code> — KpiCard, ChartCard, AqiGauge, AlertBadge, FilterChip (216 lines)</span></div>
+            <div class="phase-op" data-cid="kwsEMz"><span class="phase-op-bullet" data-cid="AYtTVz"></span><span class="phase-op-text" data-cid="4CeCml"><code data-cid="AZ6Ds7">src/pages/Dashboard.tsx</code> — 3-level drill-down, cross-filter chips, station table (293 lines)</span></div>
+            <div class="phase-op" data-cid="l_uIwS"><span class="phase-op-bullet" data-cid="9gJ6Ui"></span><span class="phase-op-text" data-cid="PMHFab"><code data-cid="foHwtj">src/pages/Precursors.tsx</code> — NOₓ donut drill, VOC cross-filter, weekly isolate (264 lines)</span></div>
+            <div class="phase-op" data-cid="nFlUur"><span class="phase-op-bullet" data-cid="3koG91"></span><span class="phase-op-text" data-cid="L2NhPn"><code data-cid="cb9k37">src/pages/Chemistry.tsx</code> — Seasonal → scatter cross-filter, month table (199 lines)</span></div>
+            <div class="phase-op" data-cid="yLuQ2o"><span class="phase-op-bullet" data-cid="6qxgVU"></span><span class="phase-op-text" data-cid="qPYXjS"><code data-cid="66kg7s">src/pages/Analytics.tsx</code> — Dual-axis long-term, scenario drill-down (263 lines)</span></div>
+            <div class="phase-op" data-cid="LgRW1h"><span class="phase-op-bullet" data-cid="V6rzpd"></span><span class="phase-op-text" data-cid="imOD7c"><code data-cid="iB2IYN">src/pages/Alerts.tsx</code> — Severity slicer, alert queue, ACK workflow, health guide (244 lines)</span></div>
+            <div class="phase-op" data-cid="7aqj29"><span class="phase-op-bullet" data-cid="Mofiqy"></span><span class="phase-op-text" data-cid="1IdRE3"><code data-cid="zekWB-">src/App.tsx</code> — HashRouter, Layout wrapper, 5 routes wired</span></div>
+            <div class="phase-op" data-cid="YX6XhB"><span class="phase-op-bullet teal" data-cid="ebh6Qb"></span><span class="phase-op-detail" data-cid="Dt2wzq">Total code written: ~10 files · ~1,900 lines TypeScript/TSX · 16 Power BI patterns</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card" data-cid="rl-eqZ">
+        <div class="phase-left" data-cid="LU2cyU">
+          <div class="phase-num" data-cid="2_OBxa">Phase 04</div>
+          <div class="phase-name" data-cid="m_1BPx">Build, Fix &amp; Deploy</div>
+          <div class="phase-tag green" data-cid="1wuFid">Deployment</div>
+        </div>
+        <div class="phase-right" data-cid="uGdBY4">
+          <div class="phase-ops" data-cid="sLYdLB">
+            <div class="phase-op" data-cid="hetGQX"><span class="phase-op-bullet" data-cid="63-Myb"></span><span class="phase-op-text" data-cid="K-_WVt">Build attempt 1 — TypeScript error: <code data-cid="a5wvjo">BellAlert</code> not exported from lucide-react</span></div>
+            <div class="phase-op" data-cid="e4wWE1"><span class="phase-op-bullet" data-cid="GCoJ12"></span><span class="phase-op-text" data-cid="VUzL_W">Fix applied — replaced with <code data-cid="eJBP3D">Bell</code> icon in Layout.tsx</span></div>
+            <div class="phase-op" data-cid="Yh2BvL"><span class="phase-op-bullet" data-cid="5LqGdM"></span><span class="phase-op-text" data-cid="cEbJYw">Build attempt 2 — SUCCESS · TypeScript check passed · Vite production bundle generated</span></div>
+            <div class="phase-op" data-cid="9npqdT"><span class="phase-op-bullet" data-cid="G6P_1E"></span><span class="phase-op-text" data-cid="h2YMsz">Deployed to Skywork CDN: <strong data-cid="kRL2ar">https://b5kssqqhxq.skywork.website</strong></span></div>
+            <div class="phase-op" data-cid="M_EV5k"><span class="phase-op-bullet teal" data-cid="A2FYn2"></span><span class="phase-op-detail" data-cid="Xui8i6">Build time: ~51s · 2 build calls total · 1 code fix</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card" data-cid="CtGA2e">
+        <div class="phase-left" data-cid="o3vpls">
+          <div class="phase-num" data-cid="PcOaOl">Phase 05</div>
+          <div class="phase-name" data-cid="9lTufz">Documentation Generation</div>
+          <div class="phase-tag blue" data-cid="adVBWI">Docs</div>
+        </div>
+        <div class="phase-right" data-cid="ZlshSY">
+          <div class="phase-ops" data-cid="Z7BlVf">
+            <div class="phase-op" data-cid="dpvYbd"><span class="phase-op-bullet" data-cid="ubYJKA"></span><span class="phase-op-text" data-cid="9WQpqv">Loaded <strong data-cid="YllAs7">writing</strong> skill; generated <code data-cid="HLelSI">o3_dashboard_documentation.html</code> (1,157 lines, 47 KB)</span></div>
+            <div class="phase-op" data-cid="3MqoQr"><span class="phase-op-bullet" data-cid="5hM4nJ"></span><span class="phase-op-text" data-cid="bDmjMd">10 sections: Overview, URL, Architecture, Pages, Power BI Features, Slicers, Design System, Data Reference, Usage Guide, Roadmap</span></div>
+            <div class="phase-op" data-cid="_CUOA0"><span class="phase-op-bullet" data-cid="GH_2FV"></span><span class="phase-op-text" data-cid="odH-5G">Cover &amp; TOC redesign revision — dark navy cover with blueprint grid, dual-column TOC with section labels and dot leaders</span></div>
+            <div class="phase-op" data-cid="bUZ6GU"><span class="phase-op-bullet" data-cid="Q4b_H3"></span><span class="phase-op-text" data-cid="_WLN-3">Build Log revision (this section) — credit usage breakdown, phase cards</span></div>
+            <div class="phase-op" data-cid="l2aa7L"><span class="phase-op-bullet teal" data-cid="xVDZS0"></span><span class="phase-op-detail" data-cid="hx-VXE">3 publish_artifact calls · Document versions: v1 (initial) · v2 (cover/TOC) · v3 (build log)</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /phase-grid -->
+
+    <!-- Credit summary -->
+    <div class="credit-summary" data-cid="E0n_r8">
+      <div class="credit-summary-header" data-cid="wTt7Dm">Estimated Credit Consumption by Operation Type</div>
+      <div class="sk-doc-native-table-frame" data-scroll-left-active="false" data-scroll-right-active="false" data-scrolling="false" data-cid="hccwKa"><table data-cid="e36tL1">
+        <thead data-cid="rMEJJ7">
+          <tr data-cid="Vhsm1V">
+            <th data-cid="zIQco9">Operation</th>
+            <th data-cid="yvCGBl">Calls</th>
+            <th data-cid="XjtPau">Credit Weight</th>
+            <th data-cid="Nq6Rjh">Notes</th>
+          </tr>
+        </thead>
+        <tbody data-cid="yZ3Rok">
+          <tr data-cid="bgQa-X">
+            <td data-cid="v_kOVw">File extraction &amp; analysis (bash, python, screenshot)</td>
+            <td data-cid="45fquZ">~8</td>
+            <td data-cid="_3aecv">Low</td>
+            <td data-cid="L67A78">Binary parsing, OLE extraction, grep</td>
+          </tr>
+          <tr data-cid="VRdCW-">
+            <td data-cid="rZ0acj">init_project (design system generation)</td>
+            <td data-cid="AwpdwG">1</td>
+            <td data-cid="DZx5aO">Medium–High</td>
+            <td data-cid="IKsRqZ">~55s execution, AI design token generation</td>
+          </tr>
+          <tr data-cid="QHNW7i">
+            <td data-cid="Y6C3Bg">TypeScript/TSX code generation (write calls)</td>
+            <td data-cid="45KoAX">10</td>
+            <td data-cid="Iijo_X">Medium</td>
+            <td data-cid="a8xMSM">~1,900 lines across 10 files</td>
+          </tr>
+          <tr data-cid="Hj14CJ">
+            <td data-cid="7_e-5J">build_and_deploy</td>
+            <td data-cid="ZZxNtO">2</td>
+            <td data-cid="ZR5iaH">Medium</td>
+            <td data-cid="4ZLYgM">TypeScript check + Vite bundle + CDN deploy each</td>
+          </tr>
+          <tr data-cid="2yf1MI">
+            <td data-cid="12aPIv">Documentation HTML generation (write)</td>
+            <td data-cid="qTlt69">1</td>
+            <td data-cid="cZR5su">Medium–High</td>
+            <td data-cid="pWxyWW">1,157-line structured HTML document</td>
+          </tr>
+          <tr data-cid="V2iuFH">
+            <td data-cid="eDBf-c">Cover &amp; TOC redesign (multiedit)</td>
+            <td data-cid="HC1fQY">3</td>
+            <td data-cid="x909tJ">Medium</td>
+            <td data-cid="97TV-9">Large CSS + HTML block replacements</td>
+          </tr>
+          <tr data-cid="JMZVki">
+            <td data-cid="wLAOWm">publish_artifact</td>
+            <td data-cid="ce-W0T">3</td>
+            <td data-cid="Kfry21">Low</td>
+            <td data-cid="DnmE4s">3 document versions published</td>
+          </tr>
+          <tr data-cid="Gr8-Ez">
+            <td data-cid="t3nj1x">load_skill (website + writing)</td>
+            <td data-cid="eVG5lW">2</td>
+            <td data-cid="x5innN">Low</td>
+            <td data-cid="dIfsGo">Skill instruction retrieval</td>
+          </tr>
+          <tr class="credit-total-row" data-cid="8EkBhG">
+            <td data-cid="WJNwDn">TOTAL ESTIMATED</td>
+            <td data-cid="4D6kok">~30 calls</td>
+            <td colspan="2" data-cid="1V2jvY"><span class="credit-hi" data-cid="n-cwaw">Check exact figure at skywork.ai/help → Billing</span></td>
+          </tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="credit-note" data-cid="m2Cz4P">
+      IMPORTANT: The table above shows the operations performed — not a verified credit count.
+      Credit costs vary by model tier, output length, and platform pricing at the time of the session.
+      To see the exact credits consumed for this conversation, visit your account at
+      <a href="https://skywork.ai/help" target="_blank" data-cid="h2DCQo">skywork.ai/help</a>
+      and check the Billing → Usage History section.
+      Credit consumption is logged per message turn, not per tool call.
+    </div>
+
+  </div>
+</div>
+
+<div class="doc-footer" data-cid="qCGSTO">
+  OZ ONE — Jubail &amp; Dammam O₃ Monitoring System · Technical Documentation v1.0<br data-cid="LDkki2">
+  Live Dashboard: <a href="https://b5kssqqhxq.skywork.website" target="_blank" style="color:var(--accent);" data-cid="jfUHs4">https://b5kssqqhxq.skywork.website</a>
+</div>
+
+
+
+
+<script data-cid="imQ4n9">
+  (function() {
+    var ruler = document.getElementById('coverRuler');
+    if (!ruler) return;
+    var w = window.innerWidth;
+    var step = 26;
+    for (var x = 0; x < w; x += step) {
+      var tick = document.createElement('div');
+      tick.className = 'cover-ruler-tick' + (x % (step * 4) === 0 ? ' major' : '');
+      tick.style.left = x + 'px';
+      ruler.appendChild(tick);
+    }
+  })();
+</script>
+
+
+
+</body></html>
